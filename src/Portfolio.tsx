@@ -902,7 +902,9 @@ function About() {
                 color: "#8F4051",
               }}
             >
-              <span className="text-xl" aria-hidden="true">✦</span>
+              <span className="text-xl" aria-hidden="true">
+                ✦
+              </span>
               <p className="text-sm font-semibold">
                 13 years of experience in Insurance
               </p>
