@@ -1,0 +1,47 @@
+node_modules/
+dist/
+build/
+.vercel/
+.netlify/
+.cache/
+.env*
+.env.*
+.vite/
+vite.config.*.timestamp-*
+*.tsbuildinfo
+*-debug.log*
+logs/
+*.log
+coverage/
+.nyc_output/
+.eslintcache
+.stylelintcache
+
+# Local editor and operating-system files
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Local credentials and certificates
+*.pem
+*.key
+*.p12
+*.pfx
+credentials.json
+service-account*.json
+
+.claude-replay.*
+.tmp-*
+/.figma/
+
+# Platform-managed agentplat state, not project source. In the
+# client-initiated single-repo workspace layout (make's `Path: "."` spec) the
+# repo root IS the workspace root, so these land inside this repo rather than
+# beside it.
+/.plugins/
+/.opencode-skills/
