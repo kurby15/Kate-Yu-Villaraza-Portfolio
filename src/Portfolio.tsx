@@ -601,17 +601,7 @@ function Nav() {
 
 function Hero() {
   const { ref, visible } = useFadeIn(0.05);
-  const resumeUrl = "/Resume_Villaraza Kaycee.pdf";
-
-  const handleDownloadResume = () => {
-    const link = document.createElement("a");
-    link.href = resumeUrl;
-    link.download = "Resume_Villaraza Kaycee.pdf";
-    link.target = "_blank";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  const resumeUrl = "/resume-villaraza.pdf";
 
   return (
     <section
@@ -715,8 +705,9 @@ function Hero() {
                 />
               </svg>
             </a>
-            <button
-              onClick={handleDownloadResume}
+            <a
+              href={resumeUrl}
+              download="Kaycee-Villaraza-CV.pdf"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium border transition-all hover:bg-[#FDE3E7]"
               style={{ borderColor: "#FD9FAE", color: "#8F4051" }}
             >
@@ -734,7 +725,7 @@ function Hero() {
                   d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"
                 />
               </svg>
-            </button>
+            </a>
           </div>
           <div
             className="inline-flex items-center gap-3 self-start px-4 py-3 rounded-2xl"
