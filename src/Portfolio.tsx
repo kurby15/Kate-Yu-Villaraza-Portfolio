@@ -761,7 +761,7 @@ function Hero() {
           >
             {[
               { raw: "50+", label: "Clients Served" },
-              { raw: "3+", label: "Years Exp." },
+              { raw: "13+", label: "Insurance Exp." },
             ].map((s, i, a) => (
               <div key={s.label} className="flex items-center gap-3">
                 <StatCell raw={s.raw} label={s.label} active={visible} />
@@ -808,7 +808,7 @@ function Hero() {
 function About() {
   const { ref: statsRef, visible: statsVisible } = useFadeIn();
   const stats = [
-    { raw: "3+", label: "Years Experience" },
+    { raw: "13+", label: "Insurance Experience" },
     { raw: "50+", label: "Clients Supported" },
     { raw: "120+", label: "Projects Completed" },
     { raw: "98%", label: "Client Satisfaction" },
@@ -892,6 +892,21 @@ function About() {
               communicate effectively, and deliver excellent customer
               experiences.
             </p>
+          </Reveal>
+          <Reveal delay={210}>
+            <div
+              className="inline-flex self-start items-center gap-3 px-4 py-3 rounded-2xl"
+              style={{
+                background: "#FDE3E7",
+                border: "1px solid #FD9FAE",
+                color: "#8F4051",
+              }}
+            >
+              <span className="text-xl" aria-hidden="true">✦</span>
+              <p className="text-sm font-semibold">
+                13 years of experience in Insurance
+              </p>
+            </div>
           </Reveal>
           <Reveal delay={240}>
             <p
