@@ -484,11 +484,34 @@ const SERVICE_ICONS = [
 function Nav() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [activeSection, setActiveSection] = useState("#home");
   useEffect(() => {
     const h = () => setScrolled(window.scrollY > 24);
     window.addEventListener("scroll", h);
     return () => window.removeEventListener("scroll", h);
   }, []);
+  useEffect(() => {
+    const sections = NAV_LINKS.map((link) =>
+      document.querySelector(link.href),
+    ).filter((section): section is Element => Boolean(section));
+    const updateActiveSection = () => {
+      const currentSection = [...sections]
+        .reverse()
+        .find((section) => section.getBoundingClientRect().top <= 140);
+      setActiveSection(currentSection ? `#${currentSection.id}` : "#home");
+    };
+    updateActiveSection();
+    window.addEventListener("scroll", updateActiveSection, { passive: true });
+    return () => window.removeEventListener("scroll", updateActiveSection);
+  }, []);
+  const navigateTo = (href: string) => {
+    setActiveSection(href);
+    setOpen(false);
+    document.querySelector(href)?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+  };
   return (
     <header
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
@@ -521,8 +544,22 @@ function Nav() {
             <li key={l.href}>
               <a
                 href={l.href}
-                className="text-sm transition-colors hover:text-[#5C8A3A]"
-                style={{ color: "#4A5E42" }}
+                className="text-sm px-3 py-1.5 rounded-full transition-all duration-300 hover:text-[#3D5C2E]"
+                style={{
+                  color: activeSection === l.href ? "#3D5C2E" : "#4A5E42",
+                  background:
+                    activeSection === l.href ? "#E6F0D8" : "transparent",
+                  boxShadow:
+                    activeSection === l.href
+                      ? "0 4px 12px rgba(61,92,46,0.12)"
+                      : "none",
+                  transform:
+                    activeSection === l.href ? "translateY(-1px)" : "none",
+                }}
+                onClick={(event) => {
+                  event.preventDefault();
+                  navigateTo(l.href);
+                }}
               >
                 {l.label}
               </a>
@@ -576,9 +613,20 @@ function Nav() {
             <a
               key={l.href}
               href={l.href}
-              className="text-base py-1"
-              style={{ color: "#2A3824" }}
-              onClick={() => setOpen(false)}
+              className={`text-base py-2 px-3 rounded-lg transition-colors ${activeSection === l.href ? "font-semibold" : ""}`}
+              style={{
+                color: "#2A3824",
+                background:
+                  activeSection === l.href ? "#E6F0D8" : "transparent",
+                boxShadow:
+                  activeSection === l.href
+                    ? "0 4px 12px rgba(61,92,46,0.1)"
+                    : "none",
+              }}
+              onClick={(event) => {
+                event.preventDefault();
+                navigateTo(l.href);
+              }}
             >
               {l.label}
             </a>
