@@ -481,7 +481,13 @@ const SERVICE_ICONS = [
 
 // ─── Nav ──────────────────────────────────────────────────────────────────────
 
-function Nav() {
+function Nav({
+  darkMode,
+  onToggleTheme,
+}: {
+  darkMode: boolean;
+  onToggleTheme: () => void;
+}) {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeSection, setActiveSection] = useState("#home");
@@ -544,9 +550,9 @@ function Nav() {
             <li key={l.href}>
               <a
                 href={l.href}
-                className="text-sm px-3 py-1.5 rounded-full transition-all duration-300 hover:text-[#3D5C2E]"
+                className={`text-sm px-3 py-1.5 rounded-full transition-all duration-300 hover:text-[#D96C82] ${activeSection === l.href ? "font-semibold theme-nav-active" : ""}`}
                 style={{
-                  color: activeSection === l.href ? "#3D5C2E" : "#4A5E42",
+                  color: activeSection === l.href ? "#D96C82" : "#2A3824",
                   background:
                     activeSection === l.href ? "#E6F0D8" : "transparent",
                   boxShadow:
@@ -566,6 +572,43 @@ function Nav() {
             </li>
           ))}
         </ul>
+        <button
+          type="button"
+          aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+          aria-pressed={darkMode}
+          title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+          onClick={onToggleTheme}
+          className="hidden md:flex w-14 h-8 items-center rounded-full border-2 p-1 transition-all hover:-translate-y-0.5"
+          style={{
+            borderColor: darkMode ? "#52634A" : "#D6E9C4",
+            background: darkMode ? "#3D5C2E" : "#E6F0D8",
+          }}
+        >
+          <span
+            className={`flex w-6 h-6 items-center justify-center rounded-full bg-white shadow-sm transition-transform duration-300 ${darkMode ? "translate-x-6" : "translate-x-0"}`}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke={darkMode ? "#D96C82" : "#3D5C2E"}
+              strokeWidth={1.8}
+              className="w-3.5 h-3.5"
+              aria-hidden="true"
+            >
+              {darkMode ? (
+                <path
+                  strokeLinecap="round"
+                  d="M20 15.5A8.5 8.5 0 018.5 4 8.5 8.5 0 1020 15.5z"
+                />
+              ) : (
+                <path
+                  strokeLinecap="round"
+                  d="M12 3v1.5M12 19.5V21M3 12h1.5M19.5 12H21m-3.36-6.36l-1.06 1.06M7.42 17.58l-1.06 1.06m0-13l1.06 1.06m9.16 9.16l1.06 1.06M15.5 12a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0z"
+                />
+              )}
+            </svg>
+          </span>
+        </button>
         <a
           href="#contact"
           className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium text-white transition-all hover:opacity-90 hover:-translate-y-px"
@@ -613,9 +656,9 @@ function Nav() {
             <a
               key={l.href}
               href={l.href}
-              className={`text-base py-2 px-3 rounded-lg transition-colors ${activeSection === l.href ? "font-semibold" : ""}`}
+              className={`text-base py-2 px-3 rounded-lg transition-colors ${activeSection === l.href ? "font-semibold theme-nav-active" : ""}`}
               style={{
-                color: "#2A3824",
+                color: activeSection === l.href ? "#D96C82" : "#2A3824",
                 background:
                   activeSection === l.href ? "#E6F0D8" : "transparent",
                 boxShadow:
@@ -639,6 +682,30 @@ function Nav() {
           >
             Work With Me
           </a>
+          <button
+            type="button"
+            aria-label={
+              darkMode ? "Switch to light mode" : "Switch to dark mode"
+            }
+            aria-pressed={darkMode}
+            onClick={onToggleTheme}
+            className="mt-1 flex items-center justify-between gap-3 px-4 py-3 rounded-full text-sm font-medium border-2 transition-colors"
+            style={{
+              color: darkMode ? "#FDE1E6" : "#3D5C2E",
+              borderColor: darkMode ? "#52634A" : "#D6E9C4",
+              background: darkMode ? "#263829" : "#F7FAF0",
+            }}
+          >
+            <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
+            <span
+              className="flex w-12 h-7 items-center rounded-full p-1"
+              style={{ background: darkMode ? "#3D5C2E" : "#D6E9C4" }}
+            >
+              <span
+                className={`block w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-300 ${darkMode ? "translate-x-5" : "translate-x-0"}`}
+              />
+            </span>
+          </button>
         </div>
       )}
     </header>
@@ -778,23 +845,47 @@ function Hero() {
             </a>
           </div>
           <div
-            className="inline-flex items-center gap-3 self-start px-4 py-3 rounded-2xl"
+            className="hero-specialization inline-flex flex-col gap-3 self-start px-4 py-3.5 rounded-2xl border shadow-sm"
             style={{
-              background: "#E6F0D8",
-              border: "1px solid #C8DFAF",
+              background: "#FFF4F6",
+              borderColor: "#FD9FAE",
               opacity: visible ? 1 : 0,
               transform: visible ? "none" : "translateY(12px)",
               transition: "opacity .7s ease 440ms,transform .7s ease 440ms",
             }}
           >
-            <span className="text-xl">✉️</span>
-            <div>
-              <p className="text-xs font-semibold" style={{ color: "#2A3824" }}>
-                Customer Service & Email Management
-              </p>
-              <p className="text-xs" style={{ color: "#7A8F72" }}>
-                Primary Specialization
-              </p>
+            <div className="flex items-center gap-3">
+              <span
+                className="specialization-icon w-9 h-9 rounded-xl flex items-center justify-center text-base"
+                style={{ background: "#FDE3E7", color: "#D96C82" }}
+              >
+                ✦
+              </span>
+              <div>
+                <p
+                  className="text-[10px] font-semibold uppercase tracking-widest"
+                  style={{ color: "#8F4051" }}
+                >
+                  Primary Specialization
+                </p>
+                <p className="text-xs" style={{ color: "#52634A" }}>
+                  Reliable support, every day
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <span
+                className="specialization-customer px-2.5 py-1 rounded-full text-[11px] font-medium"
+                style={{ background: "#E6F0D8", color: "#3D5C2E" }}
+              >
+                Customer Service
+              </span>
+              <span
+                className="specialization-email px-2.5 py-1 rounded-full text-[11px] font-medium"
+                style={{ background: "#FDE3E7", color: "#8F4051" }}
+              >
+                Email Management
+              </span>
             </div>
           </div>
         </div>
@@ -2015,9 +2106,28 @@ function Footer() {
 // ─── Portfolio ────────────────────────────────────────────────────────────────
 
 export default function Portfolio() {
+  const [darkMode, setDarkMode] = useState(() => {
+    try {
+      return localStorage.getItem("portfolio-theme") === "dark";
+    } catch {
+      return false;
+    }
+  });
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("portfolio-theme", darkMode ? "dark" : "light");
+    } catch {
+      return;
+    }
+  }, [darkMode]);
+
   return (
-    <div className="min-h-screen">
-      <Nav />
+    <div className={`min-h-screen ${darkMode ? "theme-dark" : ""}`}>
+      <Nav
+        darkMode={darkMode}
+        onToggleTheme={() => setDarkMode((value) => !value)}
+      />
       <Hero />
       <About />
       <Services />

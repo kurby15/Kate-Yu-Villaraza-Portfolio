@@ -85,3 +85,120 @@ h3 {
 section[id] {
   scroll-margin-top: 80px;
 }
+
+.theme-dark {
+  background: #152119;
+  color: #f4f7ed;
+  transition:
+    background-color 320ms ease,
+    color 320ms ease;
+}
+
+.theme-dark header {
+  background: rgba(21, 33, 25, 0.92) !important;
+  border-color: #344d39 !important;
+}
+
+.theme-dark section {
+  color: #f4f7ed;
+  transition:
+    background 320ms ease,
+    color 320ms ease;
+}
+
+.theme-dark #home {
+  background: linear-gradient(
+    135deg,
+    #152119 0%,
+    #26352a 58%,
+    #3a2930 100%
+  ) !important;
+}
+
+.theme-dark #about,
+.theme-dark #services,
+.theme-dark #tools {
+  background: #1b2a20 !important;
+}
+
+.theme-dark #projects {
+  background: #202b25 !important;
+}
+
+.theme-dark #testimonials {
+  background: #263829 !important;
+}
+
+.theme-dark #contact {
+  background: #304738 !important;
+}
+
+.theme-dark section h1,
+.theme-dark section h2,
+.theme-dark section h3,
+.theme-dark section h4,
+.theme-dark section p,
+.theme-dark section label,
+.theme-dark section a:not([style*="linear-gradient"]),
+.theme-dark section span {
+  color: #f4f7ed !important;
+}
+
+.theme-dark section [style*="background"] {
+  background-color: #263829 !important;
+  border-color: #46624b !important;
+}
+
+.theme-dark section a[style*="linear-gradient"],
+.theme-dark section button[style*="linear-gradient"] {
+  background: linear-gradient(135deg, #e88799, #bf5c73) !important;
+  color: #ffffff !important;
+}
+
+.theme-dark section input,
+.theme-dark section select,
+.theme-dark section textarea {
+  background: #1b2a20 !important;
+  border-color: #46624b !important;
+  color: #f4f7ed !important;
+}
+
+.theme-dark section [style*="color"],
+.theme-dark header [style*="color"] {
+  color: #f4f7ed !important;
+}
+
+.theme-dark header a,
+.theme-dark header button {
+  color: #f4f7ed !important;
+}
+
+.theme-dark header a.theme-nav-active {
+  color: #fd9fae !important;
+}
+
+.theme-dark section input::placeholder,
+.theme-dark section textarea::placeholder {
+  color: #b8d4a0 !important;
+  opacity: 1;
+}
+
+.theme-dark .hero-specialization {
+  background: #203328 !important;
+  border-color: #52725a !important;
+}
+
+.theme-dark .specialization-icon {
+  background: #3d5c2e !important;
+  color: #fde1e6 !important;
+}
+
+.theme-dark .hero-specialization .specialization-customer {
+  background: #304a37 !important;
+  color: #d6e9c4 !important;
+}
+
+.theme-dark .hero-specialization .specialization-email {
+  background: #5b3440 !important;
+  color: #fde1e6 !important;
+}
