@@ -1,6 +1,7 @@
-import { useState, useEffect, useRef } from 'react'
-import portrait1 from './imports/image-1.png'
-import portrait2 from './imports/image-2.png'
+import { useState, useEffect, useRef } from "react";
+import { icons as brandIcons } from "@iconify-json/logos";
+import portrait1 from "./imports/image-1.png";
+import portrait2 from "./imports/image-2.png";
 
 // ─── Palette: matcha green ────────────────────────────────────────────────────
 // bg: #F7FAF0  matcha: #7FAE60  deep: #3D5C2E  light: #B8D4A0  text: #2A3824
@@ -8,297 +9,1036 @@ import portrait2 from './imports/image-2.png'
 // ─── Hooks ────────────────────────────────────────────────────────────────────
 
 function useFadeIn(threshold = 0.1) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
   useEffect(() => {
-    const el = ref.current; if (!el) return
-    const obs = new IntersectionObserver(([e]) => { if (e.isIntersecting) { setVisible(true); obs.disconnect() } }, { threshold })
-    obs.observe(el); return () => obs.disconnect()
-  }, [threshold])
-  return { ref, visible }
+    const el = ref.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
+      },
+      { threshold },
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, [threshold]);
+  return { ref, visible };
 }
 
 function useCounter(target: number, active: boolean, duration = 1300) {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
   useEffect(() => {
-    if (!active) return
-    let frame = 0; const total = Math.round(duration / 16)
+    if (!active) return;
+    let frame = 0;
+    const total = Math.round(duration / 16);
     const t = setInterval(() => {
-      frame++; setCount(Math.floor((1 - Math.pow(1 - frame / total, 3)) * target))
-      if (frame >= total) { setCount(target); clearInterval(t) }
-    }, 16)
-    return () => clearInterval(t)
-  }, [target, active, duration])
-  return count
+      frame++;
+      setCount(Math.floor((1 - Math.pow(1 - frame / total, 3)) * target));
+      if (frame >= total) {
+        setCount(target);
+        clearInterval(t);
+      }
+    }, 16);
+    return () => clearInterval(t);
+  }, [target, active, duration]);
+  return count;
 }
 
-function Reveal({ children, delay = 0, from = 'bottom', className = '' }: {
-  children: React.ReactNode; delay?: number; from?: 'bottom' | 'left' | 'right'; className?: string
+function Reveal({
+  children,
+  delay = 0,
+  from = "bottom",
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  from?: "bottom" | "left" | "right";
+  className?: string;
 }) {
-  const { ref, visible } = useFadeIn()
-  const tr = from === 'left' ? 'translateX(-28px)' : from === 'right' ? 'translateX(28px)' : 'translateY(24px)'
+  const { ref, visible } = useFadeIn();
+  const tr =
+    from === "left"
+      ? "translateX(-28px)"
+      : from === "right"
+        ? "translateX(28px)"
+        : "translateY(24px)";
   return (
-    <div ref={ref} className={className} style={{ opacity: visible ? 1 : 0, transform: visible ? 'none' : tr, transition: `opacity .72s cubic-bezier(.25,.8,.25,1) ${delay}ms,transform .72s cubic-bezier(.25,.8,.25,1) ${delay}ms` }}>
+    <div
+      ref={ref}
+      className={className}
+      style={{
+        opacity: visible ? 1 : 0,
+        transform: visible ? "none" : tr,
+        transition: `opacity .72s cubic-bezier(.25,.8,.25,1) ${delay}ms,transform .72s cubic-bezier(.25,.8,.25,1) ${delay}ms`,
+      }}
+    >
       {children}
     </div>
-  )
+  );
 }
 
-function StatCell({ raw, label, active, dark = true }: { raw: string; label: string; active: boolean; dark?: boolean }) {
-  const num = parseInt(raw, 10); const suffix = raw.replace(/\d+/, '')
-  const count = useCounter(num, active)
+function StatCell({
+  raw,
+  label,
+  active,
+  dark = true,
+}: {
+  raw: string;
+  label: string;
+  active: boolean;
+  dark?: boolean;
+}) {
+  const num = parseInt(raw, 10);
+  const suffix = raw.replace(/\d+/, "");
+  const count = useCounter(num, active);
   return (
     <div className="text-center px-3 py-2">
-      <p className="text-xl font-semibold" style={{ fontFamily: 'Playfair Display,serif', color: dark ? '#fff' : '#2A3824' }}>
+      <p
+        className="text-xl font-semibold"
+        style={{
+          fontFamily: "Playfair Display,serif",
+          color: dark ? "#fff" : "#2A3824",
+        }}
+      >
         {active ? `${count}${suffix}` : raw}
       </p>
-      <p className="text-[10px] leading-tight mt-0.5" style={{ color: dark ? '#B8D4A0' : '#52634A' }}>{label}</p>
+      <p
+        className="text-[10px] leading-tight mt-0.5"
+        style={{ color: dark ? "#B8D4A0" : "#52634A" }}
+      >
+        {label}
+      </p>
     </div>
-  )
+  );
 }
 
-function Orb({ size = 260, color, className = '' }: { size?: number; color: string; className?: string }) {
-  return <div aria-hidden className={`absolute rounded-full pointer-events-none select-none ${className}`} style={{ width: size, height: size, background: color, filter: `blur(${Math.round(size * 0.28)}px)`, opacity: 0.38 }} />
-}
-function Arc({ className = '', opacity = 0.22 }: { className?: string; opacity?: number }) {
+function Orb({
+  size = 260,
+  color,
+  className = "",
+}: {
+  size?: number;
+  color: string;
+  className?: string;
+}) {
   return (
-    <svg viewBox="0 0 180 180" fill="none" aria-hidden className={`pointer-events-none select-none ${className}`}>
-      <path d="M 10 170 Q 10 10 170 10" stroke="currentColor" strokeWidth="1" strokeLinecap="round" opacity={opacity} />
-    </svg>
-  )
+    <div
+      aria-hidden
+      className={`absolute rounded-full pointer-events-none select-none ${className}`}
+      style={{
+        width: size,
+        height: size,
+        background: color,
+        filter: `blur(${Math.round(size * 0.28)}px)`,
+        opacity: 0.38,
+      }}
+    />
+  );
 }
-function Dots({ className = '' }: { className?: string }) {
-  const pts = [[8,8],[28,20],[52,10],[76,28],[96,8],[18,48],[56,44],[82,54],[12,78],[44,82],[78,68],[96,88]]
+function Arc({
+  className = "",
+  opacity = 0.22,
+}: {
+  className?: string;
+  opacity?: number;
+}) {
   return (
-    <svg viewBox="0 0 108 96" fill="currentColor" aria-hidden className={`pointer-events-none select-none ${className}`}>
-      {pts.map(([cx, cy], i) => <circle key={i} cx={cx} cy={cy} r="1.6" opacity="0.35" />)}
+    <svg
+      viewBox="0 0 180 180"
+      fill="none"
+      aria-hidden
+      className={`pointer-events-none select-none ${className}`}
+    >
+      <path
+        d="M 10 170 Q 10 10 170 10"
+        stroke="currentColor"
+        strokeWidth="1"
+        strokeLinecap="round"
+        opacity={opacity}
+      />
     </svg>
-  )
+  );
+}
+function Dots({ className = "" }: { className?: string }) {
+  const pts = [
+    [8, 8],
+    [28, 20],
+    [52, 10],
+    [76, 28],
+    [96, 8],
+    [18, 48],
+    [56, 44],
+    [82, 54],
+    [12, 78],
+    [44, 82],
+    [78, 68],
+    [96, 88],
+  ];
+  return (
+    <svg
+      viewBox="0 0 108 96"
+      fill="currentColor"
+      aria-hidden
+      className={`pointer-events-none select-none ${className}`}
+    >
+      {pts.map(([cx, cy], i) => (
+        <circle key={i} cx={cx} cy={cy} r="1.6" opacity="0.35" />
+      ))}
+    </svg>
+  );
 }
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
 
 const NAV_LINKS = [
-  { label: 'Home', href: '#home' },
-  { label: 'About', href: '#about' },
-  { label: 'Services', href: '#services' },
-  { label: 'Projects', href: '#projects' },
-  { label: 'Testimonials', href: '#testimonials' },
-  { label: 'Contact', href: '#contact' },
-]
+  { label: "Home", href: "#home" },
+  { label: "About", href: "#about" },
+  { label: "Services", href: "#services" },
+  { label: "Projects", href: "#projects" },
+  { label: "Testimonials", href: "#testimonials" },
+  { label: "Contact", href: "#contact" },
+];
 
 const SERVICES = [
-  { id: 1, featured: true, title: 'Customer Service', short: 'Providing friendly, professional, and reliable support so your clients feel valued and heard.', features: ['Customer inquiries', 'Chat & email support', 'Follow-ups', 'Complaint handling', 'Client communication', 'Satisfaction support'] },
-  { id: 2, featured: true, title: 'Email Management', short: 'Keeping your inbox organized, communication clear, and important messages handled efficiently.', features: ['Inbox organization', 'Sorting & filtering', 'Professional replies', 'Follow-ups', 'Appointment coordination', 'Calendar scheduling'] },
-  { id: 3, title: 'Administrative Support', short: 'Handling day-to-day admin so you can focus on what matters most.', features: ['Document management', 'Report preparation', 'File organization', 'Meeting coordination'] },
-  { id: 4, title: 'Data Entry & Research', short: 'Accurate, timely data entry so your records stay clean and current.', features: ['Data entry', 'Web research', 'Database management', 'Spreadsheet work'] },
-  { id: 5, title: 'Calendar Management', short: 'Never miss a meeting — I keep your schedule organized and protected.', features: ['Appointment scheduling', 'Meeting reminders', 'Conflict resolution', 'Time blocking'] },
-  { id: 6, title: 'Social Media Assistance', short: 'Keeping your social presence active, consistent, and engaging.', features: ['Content scheduling', 'Community management', 'Caption writing', 'Analytics tracking'] },
-]
+  {
+    id: 1,
+    featured: true,
+    title: "Customer Service",
+    short:
+      "Providing friendly, professional, and reliable support so your clients feel valued and heard.",
+    features: [
+      "Customer inquiries",
+      "Chat & email support",
+      "Follow-ups",
+      "Complaint handling",
+      "Client communication",
+      "Satisfaction support",
+    ],
+  },
+  {
+    id: 2,
+    featured: true,
+    title: "Email Management",
+    short:
+      "Keeping your inbox organized, communication clear, and important messages handled efficiently.",
+    features: [
+      "Inbox organization",
+      "Sorting & filtering",
+      "Professional replies",
+      "Follow-ups",
+      "Appointment coordination",
+      "Calendar scheduling",
+    ],
+  },
+  {
+    id: 3,
+    title: "Administrative Support",
+    short: "Handling day-to-day admin so you can focus on what matters most.",
+    features: [
+      "Document management",
+      "Report preparation",
+      "File organization",
+      "Meeting coordination",
+    ],
+  },
+  {
+    id: 4,
+    title: "Data Entry & Research",
+    short:
+      "Accurate, timely data entry so your records stay clean and current.",
+    features: [
+      "Data entry",
+      "Web research",
+      "Database management",
+      "Spreadsheet work",
+    ],
+  },
+  {
+    id: 5,
+    title: "Calendar Management",
+    short:
+      "Never miss a meeting — I keep your schedule organized and protected.",
+    features: [
+      "Appointment scheduling",
+      "Meeting reminders",
+      "Conflict resolution",
+      "Time blocking",
+    ],
+  },
+  {
+    id: 6,
+    title: "Social Media Assistance",
+    short: "Keeping your social presence active, consistent, and engaging.",
+    features: [
+      "Content scheduling",
+      "Community management",
+      "Caption writing",
+      "Analytics tracking",
+    ],
+  },
+];
 
 const PROJECTS = [
-  { id: 1, title: 'Customer Service Support', category: 'Customer Service', description: 'Managed end-to-end customer inquiries, follow-ups, and professional client communication for a growing e-commerce brand.', tools: ['Gmail', 'Zendesk', 'Slack', 'Notion'], image: 'https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop&auto=format' },
-  { id: 2, title: 'Email Management System', category: 'Email Management', description: 'Designed organized inbox workflows, templated responses, and communication processes for a coaching business.', tools: ['Outlook', 'Notion', 'Google Calendar', 'Trello'], image: 'https://images.unsplash.com/photo-1487017159836-4e23ece2e4cf?w=600&h=400&fit=crop&auto=format' },
-  { id: 3, title: 'Administrative Support', category: 'Administrative', description: 'Streamlined scheduling, document management, and administrative tasks for a busy solopreneur.', tools: ['Google Workspace', 'Notion', 'Zoom', 'Teams'], image: 'https://images.unsplash.com/photo-1558478551-1a378f63328e?w=600&h=400&fit=crop&auto=format' },
-  { id: 4, title: 'Social Media Coordination', category: 'Social Media', description: 'Scheduled and managed social content across platforms, tracked engagement, and supported community management.', tools: ['Buffer', 'Canva', 'Instagram', 'Facebook'], image: 'https://images.unsplash.com/photo-1570993492881-25240ce854f4?w=600&h=400&fit=crop&auto=format' },
-]
+  {
+    id: 1,
+    title: "Customer Service Support",
+    category: "Customer Service",
+    description:
+      "Managed end-to-end customer inquiries, follow-ups, and professional client communication for a growing e-commerce brand.",
+    tools: ["Gmail", "Zendesk", "Slack", "Notion"],
+    image:
+      "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=600&h=400&fit=crop&auto=format",
+  },
+  {
+    id: 2,
+    title: "Email Management System",
+    category: "Email Management",
+    description:
+      "Designed organized inbox workflows, templated responses, and communication processes for a coaching business.",
+    tools: ["Outlook", "Notion", "Google Calendar", "Trello"],
+    image:
+      "https://images.unsplash.com/photo-1487017159836-4e23ece2e4cf?w=600&h=400&fit=crop&auto=format",
+  },
+  {
+    id: 3,
+    title: "Administrative Support",
+    category: "Administrative",
+    description:
+      "Streamlined scheduling, document management, and administrative tasks for a busy solopreneur.",
+    tools: ["Google Workspace", "Notion", "Zoom", "Teams"],
+    image:
+      "https://images.unsplash.com/photo-1558478551-1a378f63328e?w=600&h=400&fit=crop&auto=format",
+  },
+  {
+    id: 4,
+    title: "Social Media Coordination",
+    category: "Social Media",
+    description:
+      "Scheduled and managed social content across platforms, tracked engagement, and supported community management.",
+    tools: ["Buffer", "Canva", "Instagram", "Facebook"],
+    image:
+      "https://images.unsplash.com/photo-1570993492881-25240ce854f4?w=600&h=400&fit=crop&auto=format",
+  },
+];
 
 const TESTIMONIALS = [
-  { id: 1, name: 'Jessica Morales', role: 'CEO, Bloom Digital Agency', text: 'Working with Kate completely transformed how we handle client communications. Her attention to detail and quick response times are unmatched. Our inbox went from chaotic to perfectly organized in just one week.', service: 'Email Management', rating: 5, initials: 'JM', bg: '#E6F0D8' },
-  { id: 2, name: 'David Okafor', role: 'Founder, Okafor Consulting', text: "I was drowning in customer inquiries before Kate stepped in. She's professional, proactive, and genuinely cares about making every client feel heard. Couldn't run my business without her.", service: 'Customer Service', rating: 5, initials: 'DO', bg: '#B8D4A0' },
-  { id: 3, name: 'Sarah Chen', role: 'Online Business Manager', text: "Kate handles my entire calendar and a chunk of my admin work. She anticipates needs before I even ask. If you're looking for a VA who truly gets it — she's the one.", service: 'Administrative Support', rating: 5, initials: 'SC', bg: '#D6E9C4' },
-]
+  {
+    id: 1,
+    name: "Jessica Morales",
+    role: "CEO, Bloom Digital Agency",
+    text: "Working with Kate completely transformed how we handle client communications. Her attention to detail and quick response times are unmatched. Our inbox went from chaotic to perfectly organized in just one week.",
+    service: "Email Management",
+    rating: 5,
+    initials: "JM",
+    bg: "#E6F0D8",
+  },
+  {
+    id: 2,
+    name: "David Okafor",
+    role: "Founder, Okafor Consulting",
+    text: "I was drowning in customer inquiries before Kate stepped in. She's professional, proactive, and genuinely cares about making every client feel heard. Couldn't run my business without her.",
+    service: "Customer Service",
+    rating: 5,
+    initials: "DO",
+    bg: "#B8D4A0",
+  },
+  {
+    id: 3,
+    name: "Sarah Chen",
+    role: "Online Business Manager",
+    text: "Kate handles my entire calendar and a chunk of my admin work. She anticipates needs before I even ask. If you're looking for a VA who truly gets it — she's the one.",
+    service: "Administrative Support",
+    rating: 5,
+    initials: "SC",
+    bg: "#D6E9C4",
+  },
+];
 
 const TOOLS: Record<string, string[]> = {
-  Productivity: ['Google Workspace', 'Microsoft Office', 'Google Calendar', 'Notion', 'Trello'],
-  Communication: ['Gmail', 'Outlook', 'Zoom', 'Slack', 'Microsoft Teams'],
-  'Customer Service': ['Zendesk', 'Freshdesk', 'Intercom', 'HubSpot', 'LiveChat'],
-  Skills: ['Customer Service', 'Email Management', 'Admin Support', 'Data Entry', 'Time Management', 'Organization'],
-}
+  Productivity: [
+    "Google Workspace",
+    "Microsoft Office",
+    "Google Calendar",
+    "Notion",
+    "Trello",
+  ],
+  Communication: ["Gmail", "Outlook", "Zoom", "Slack", "Microsoft Teams"],
+  "Customer Service": [
+    "Zendesk",
+    "Freshdesk",
+    "Intercom",
+    "HubSpot",
+    "LiveChat",
+  ],
+  Skills: [
+    "Customer Service",
+    "Email Management",
+    "Admin Support",
+    "Data Entry",
+    "Time Management",
+    "Organization",
+  ],
+};
 
-const PROJECT_FILTERS = ['All', 'Customer Service', 'Email Management', 'Administrative', 'Social Media']
+const PROJECT_FILTERS = [
+  "All",
+  "Customer Service",
+  "Email Management",
+  "Administrative",
+  "Social Media",
+];
 
 const SERVICE_ICONS = [
-  <svg key="cs" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-7 h-7"><path strokeLinecap="round" strokeLinejoin="round" d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" /></svg>,
-  <svg key="em" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-7 h-7"><path strokeLinecap="round" strokeLinejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75" /></svg>,
-  <svg key="ad" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z" /></svg>,
-  <svg key="de" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" /></svg>,
-  <svg key="ca" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5" /></svg>,
-  <svg key="sm" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.5} className="w-6 h-6"><path strokeLinecap="round" strokeLinejoin="round" d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z" /></svg>,
-]
+  <svg
+    key="cs"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    className="w-7 h-7"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+    />
+  </svg>,
+  <svg
+    key="em"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    className="w-7 h-7"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+    />
+  </svg>,
+  <svg
+    key="ad"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    className="w-6 h-6"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"
+    />
+  </svg>,
+  <svg
+    key="de"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    className="w-6 h-6"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125"
+    />
+  </svg>,
+  <svg
+    key="ca"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    className="w-6 h-6"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 11.25v7.5"
+    />
+  </svg>,
+  <svg
+    key="sm"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth={1.5}
+    className="w-6 h-6"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M7.217 10.907a2.25 2.25 0 100 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186l9.566-5.314m-9.566 7.5l9.566 5.314m0 0a2.25 2.25 0 103.935 2.186 2.25 2.25 0 00-3.935-2.186zm0-12.814a2.25 2.25 0 103.933-2.185 2.25 2.25 0 00-3.933 2.185z"
+    />
+  </svg>,
+];
 
 // ─── Nav ──────────────────────────────────────────────────────────────────────
 
 function Nav() {
-  const [open, setOpen] = useState(false)
-  const [scrolled, setScrolled] = useState(false)
+  const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   useEffect(() => {
-    const h = () => setScrolled(window.scrollY > 24)
-    window.addEventListener('scroll', h); return () => window.removeEventListener('scroll', h)
-  }, [])
+    const h = () => setScrolled(window.scrollY > 24);
+    window.addEventListener("scroll", h);
+    return () => window.removeEventListener("scroll", h);
+  }, []);
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
-      style={{ background: scrolled ? 'rgba(247,250,240,0.94)' : 'transparent', backdropFilter: scrolled ? 'blur(14px)' : 'none', borderBottom: scrolled ? '1px solid #D6E9C4' : 'none' }}>
+    <header
+      className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+      style={{
+        background: scrolled ? "rgba(247,250,240,0.94)" : "transparent",
+        backdropFilter: scrolled ? "blur(14px)" : "none",
+        borderBottom: scrolled ? "1px solid #D6E9C4" : "none",
+      }}
+    >
       <nav className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
         <a href="#home" className="flex items-center gap-2.5">
-          <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold text-white" style={{ background: 'linear-gradient(135deg,#7FAE60,#3D5C2E)', fontFamily: 'Playfair Display,serif' }}>KY</div>
-          <span className="font-semibold text-sm tracking-tight" style={{ color: '#2A3824' }}>Kate Yu Villaraza</span>
+          <div
+            className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold text-white"
+            style={{
+              background: "linear-gradient(135deg,#7FAE60,#3D5C2E)",
+              fontFamily: "Playfair Display,serif",
+            }}
+          >
+            KY
+          </div>
+          <span
+            className="font-semibold text-sm tracking-tight"
+            style={{ color: "#2A3824" }}
+          >
+            Kate Yu Villaraza
+          </span>
         </a>
         <ul className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map(l => <li key={l.href}><a href={l.href} className="text-sm transition-colors hover:text-[#5C8A3A]" style={{ color: '#4A5E42' }}>{l.label}</a></li>)}
+          {NAV_LINKS.map((l) => (
+            <li key={l.href}>
+              <a
+                href={l.href}
+                className="text-sm transition-colors hover:text-[#5C8A3A]"
+                style={{ color: "#4A5E42" }}
+              >
+                {l.label}
+              </a>
+            </li>
+          ))}
         </ul>
-        <a href="#contact" className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium text-white transition-all hover:opacity-90 hover:-translate-y-px" style={{ background: 'linear-gradient(135deg,#7FAE60,#3D5C2E)' }}>Work With Me</a>
-        <button className="md:hidden" style={{ color: '#3D5C2E' }} onClick={() => setOpen(!open)}>
-          {open ? <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6"><path strokeLinecap="round" d="M6 18L18 6M6 6l12 12" /></svg>
-            : <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} className="w-6 h-6"><path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" /></svg>}
+        <a
+          href="#contact"
+          className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium text-white transition-all hover:opacity-90 hover:-translate-y-px"
+          style={{ background: "linear-gradient(135deg,#FD9FAE,#D96C82)" }}
+        >
+          Work With Me
+        </a>
+        <button
+          className="md:hidden"
+          style={{ color: "#3D5C2E" }}
+          onClick={() => setOpen(!open)}
+        >
+          {open ? (
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              className="w-6 h-6"
+            >
+              <path strokeLinecap="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          ) : (
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+              className="w-6 h-6"
+            >
+              <path strokeLinecap="round" d="M4 6h16M4 12h16M4 18h16" />
+            </svg>
+          )}
         </button>
       </nav>
       {open && (
-        <div className="md:hidden px-6 pb-6 pt-2 flex flex-col gap-4 border-t" style={{ background: 'rgba(247,250,240,0.98)', borderColor: '#D6E9C4' }}>
-          {NAV_LINKS.map(l => <a key={l.href} href={l.href} className="text-base py-1" style={{ color: '#2A3824' }} onClick={() => setOpen(false)}>{l.label}</a>)}
-          <a href="#contact" className="mt-2 py-3 rounded-full text-sm font-medium text-white text-center" style={{ background: 'linear-gradient(135deg,#7FAE60,#3D5C2E)' }} onClick={() => setOpen(false)}>Work With Me</a>
+        <div
+          className="md:hidden px-6 pb-6 pt-2 flex flex-col gap-4 border-t"
+          style={{
+            background: "rgba(247,250,240,0.98)",
+            borderColor: "#D6E9C4",
+          }}
+        >
+          {NAV_LINKS.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="text-base py-1"
+              style={{ color: "#2A3824" }}
+              onClick={() => setOpen(false)}
+            >
+              {l.label}
+            </a>
+          ))}
+          <a
+            href="#contact"
+            className="mt-2 py-3 rounded-full text-sm font-medium text-white text-center"
+            style={{ background: "linear-gradient(135deg,#FD9FAE,#D96C82)" }}
+            onClick={() => setOpen(false)}
+          >
+            Work With Me
+          </a>
         </div>
       )}
     </header>
-  )
+  );
 }
 
 // ─── Hero ─────────────────────────────────────────────────────────────────────
 
 function Hero() {
-  const { ref, visible } = useFadeIn(0.05)
+  const { ref, visible } = useFadeIn(0.05);
   return (
-    <section id="home" className="min-h-screen flex items-center pt-20 overflow-hidden relative" style={{ background: '#F7FAF0' }}>
-      <Orb size={360} color="#B8D4A0" className="top-0 right-[-80px]" />
-      <Orb size={240} color="#7FAE60" className="bottom-16 left-[-60px]" />
-      <Arc className="absolute top-24 left-8 w-36 text-[#3D5C2E] hidden lg:block" opacity={0.18} />
-      <Dots className="absolute bottom-32 right-12 w-24 text-[#7FAE60] hidden lg:block" />
+    <section
+      id="home"
+      className="min-h-screen flex items-center pt-20 overflow-hidden relative"
+      style={{ background: "#F7FAF0" }}
+    >
+      <Orb size={360} color="#FD9FAE" className="top-0 right-[-80px]" />
+      <Orb size={240} color="#FD9FAE" className="bottom-16 left-[-60px]" />
+      <Arc
+        className="absolute top-24 left-8 w-36 text-[#FD9FAE] hidden lg:block"
+        opacity={0.18}
+      />
+      <Dots className="absolute bottom-32 right-12 w-24 text-[#FD9FAE] hidden lg:block" />
       <div className="max-w-6xl mx-auto px-6 w-full py-16 grid md:grid-cols-2 gap-12 items-center">
         <div ref={ref} className="flex flex-col gap-6 order-2 md:order-1">
-          <div style={{ opacity: visible?1:0, transform: visible?'none':'translateY(20px)', transition: 'opacity .6s ease 0ms,transform .6s ease 0ms' }}>
-            <span className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium" style={{ background: '#C8DFAF', color: '#2A3824' }}>
-              <span className="w-1.5 h-1.5 rounded-full bg-[#3D5C2E] animate-pulse" />Available for New Clients
+          <div
+            style={{
+              opacity: visible ? 1 : 0,
+              transform: visible ? "none" : "translateY(20px)",
+              transition: "opacity .6s ease 0ms,transform .6s ease 0ms",
+            }}
+          >
+            <span
+              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium"
+              style={{ background: "#C8DFAF", color: "#2A3824" }}
+            >
+              <span className="w-1.5 h-1.5 rounded-full bg-[#3D5C2E] animate-pulse" />
+              Available for New Clients
             </span>
           </div>
-          <h1 className="text-4xl md:text-5xl lg:text-[3.4rem] leading-[1.1]"
-            style={{ fontFamily:'Playfair Display,serif', fontWeight:500, color:'#2A3824', opacity:visible?1:0, transform:visible?'none':'translateY(28px)', transition:'opacity .7s ease 100ms,transform .7s ease 100ms' }}>
-            Your Reliable<br /><em className="italic" style={{ color:'#7FAE60' }}>Partner</em> in<br />Productivity.
+          <h1
+            className="text-4xl md:text-5xl lg:text-[3.4rem] leading-[1.1]"
+            style={{
+              fontFamily: "Playfair Display,serif",
+              fontWeight: 500,
+              color: "#2A3824",
+              opacity: visible ? 1 : 0,
+              transform: visible ? "none" : "translateY(28px)",
+              transition: "opacity .7s ease 100ms,transform .7s ease 100ms",
+            }}
+          >
+            Your Reliable
+            <br />
+            <em className="italic" style={{ color: "#FD9FAE" }}>
+              Partner
+            </em>{" "}
+            in
+            <br />
+            Productivity.
           </h1>
-          <p className="text-[15px] leading-relaxed max-w-md" style={{ color:'#52634A', opacity:visible?1:0, transform:visible?'none':'translateY(20px)', transition:'opacity .7s ease 200ms,transform .7s ease 200ms' }}>
-            Helping businesses stay organized, connected, and focused through reliable customer service, email management, and administrative support.
+          <p
+            className="text-[15px] leading-relaxed max-w-md"
+            style={{
+              color: "#52634A",
+              opacity: visible ? 1 : 0,
+              transform: visible ? "none" : "translateY(20px)",
+              transition: "opacity .7s ease 200ms,transform .7s ease 200ms",
+            }}
+          >
+            Helping businesses stay organized, connected, and focused through
+            reliable customer service, email management, and administrative
+            support.
           </p>
-          <div className="flex flex-wrap gap-3 mt-1" style={{ opacity:visible?1:0, transform:visible?'none':'translateY(16px)', transition:'opacity .7s ease 320ms,transform .7s ease 320ms' }}>
-            <a href="#contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium text-white transition-all hover:opacity-90 hover:-translate-y-px" style={{ background:'linear-gradient(135deg,#7FAE60,#3D5C2E)' }}>
-              Work With Me <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+          <div
+            className="flex flex-wrap gap-3 mt-1"
+            style={{
+              opacity: visible ? 1 : 0,
+              transform: visible ? "none" : "translateY(16px)",
+              transition: "opacity .7s ease 320ms,transform .7s ease 320ms",
+            }}
+          >
+            <a
+              href="#contact"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium text-white transition-all hover:opacity-90 hover:-translate-y-px"
+              style={{ background: "linear-gradient(135deg,#FD9FAE,#D96C82)" }}
+            >
+              Work With Me{" "}
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.8}
+                className="w-4 h-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                />
+              </svg>
             </a>
-            <a href="#services" className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium border transition-all hover:bg-[#E6F0D8]" style={{ borderColor:'#7FAE60', color:'#3D5C2E' }}>View My Services</a>
+            <a
+              href="#services"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium border transition-all hover:bg-[#E6F0D8]"
+              style={{ borderColor: "#7FAE60", color: "#3D5C2E" }}
+            >
+              View My Services
+            </a>
           </div>
-          <div className="inline-flex items-center gap-3 self-start px-4 py-3 rounded-2xl"
-            style={{ background:'#E6F0D8', border:'1px solid #C8DFAF', opacity:visible?1:0, transform:visible?'none':'translateY(12px)', transition:'opacity .7s ease 440ms,transform .7s ease 440ms' }}>
+          <div
+            className="inline-flex items-center gap-3 self-start px-4 py-3 rounded-2xl"
+            style={{
+              background: "#E6F0D8",
+              border: "1px solid #C8DFAF",
+              opacity: visible ? 1 : 0,
+              transform: visible ? "none" : "translateY(12px)",
+              transition: "opacity .7s ease 440ms,transform .7s ease 440ms",
+            }}
+          >
             <span className="text-xl">✉️</span>
             <div>
-              <p className="text-xs font-semibold" style={{ color:'#2A3824' }}>Customer Service & Email Management</p>
-              <p className="text-xs" style={{ color:'#7A8F72' }}>Primary Specialization</p>
+              <p className="text-xs font-semibold" style={{ color: "#2A3824" }}>
+                Customer Service & Email Management
+              </p>
+              <p className="text-xs" style={{ color: "#7A8F72" }}>
+                Primary Specialization
+              </p>
             </div>
           </div>
         </div>
         <div className="flex justify-center order-1 md:order-2 relative">
-          <Orb size={280} color="#C8DFAF" className="top-[-20px] right-0 opacity-50" />
-          <div className="relative z-10 shadow-xl" style={{ width:300, height:360, borderRadius:'50% 50% 40% 40% / 55% 55% 45% 45%', overflow:'hidden', background:'#D6E9C4', border:'4px solid #E6F0D8' }}>
-            <img src={portrait1} alt="Kate Yu Villaraza" className="w-full h-full object-cover object-top" />
+          <Orb
+            size={280}
+            color="#C8DFAF"
+            className="top-[-20px] right-0 opacity-50"
+          />
+          <div
+            className="relative z-10 shadow-xl"
+            style={{
+              width: 300,
+              height: 360,
+              borderRadius: "50% 50% 40% 40% / 55% 55% 45% 45%",
+              overflow: "hidden",
+              background: "#D6E9C4",
+              border: "4px solid #E6F0D8",
+            }}
+          >
+            <img
+              src={portrait1}
+              alt="Kate Yu Villaraza"
+              className="w-full h-full object-cover object-top"
+            />
           </div>
-          <div className="absolute bottom-2 left-0 z-20 px-4 py-3 rounded-2xl shadow-lg flex items-center gap-3" style={{ background:'#3D5C2E' }}>
-            {[{raw:'50+',label:'Clients Served'},{raw:'3+',label:'Years Exp.'}].map((s,i,a) => (
+          <div
+            className="absolute bottom-2 left-0 z-20 px-4 py-3 rounded-2xl shadow-lg flex items-center gap-3"
+            style={{ background: "#3D5C2E" }}
+          >
+            {[
+              { raw: "50+", label: "Clients Served" },
+              { raw: "3+", label: "Years Exp." },
+            ].map((s, i, a) => (
               <div key={s.label} className="flex items-center gap-3">
                 <StatCell raw={s.raw} label={s.label} active={visible} />
-                {i < a.length-1 && <div className="w-px h-8 opacity-30 bg-[#B8D4A0]" />}
+                {i < a.length - 1 && (
+                  <div className="w-px h-8 opacity-30 bg-[#B8D4A0]" />
+                )}
               </div>
             ))}
           </div>
         </div>
       </div>
-      <div className="absolute bottom-0 left-0 right-0 py-3.5 border-t hidden md:block" style={{ borderColor:'#D6E9C4', background:'rgba(247,250,240,0.85)' }}>
-        <div className="max-w-6xl mx-auto px-6 flex items-center justify-center gap-10 text-[11px] uppercase tracking-widest font-medium" style={{ color:'#7A8F72' }}>
-          {['Graphic & Web Design','General Virtual Assistant','Data Entry Specialist','Social Media Manager'].map((r,i,a) => (
-            <span key={r} className="flex items-center gap-10">{r}{i<a.length-1&&<span className="w-1 h-1 rounded-full inline-block" style={{background:'#B8D4A0'}} />}</span>
+      <div
+        className="absolute bottom-0 left-0 right-0 py-3.5 border-t hidden md:block"
+        style={{ borderColor: "#D6E9C4", background: "rgba(247,250,240,0.85)" }}
+      >
+        <div
+          className="max-w-6xl mx-auto px-6 flex items-center justify-center gap-10 text-[11px] uppercase tracking-widest font-medium"
+          style={{ color: "#7A8F72" }}
+        >
+          {[
+            "Graphic & Web Design",
+            "General Virtual Assistant",
+            "Data Entry Specialist",
+            "Social Media Manager",
+          ].map((r, i, a) => (
+            <span key={r} className="flex items-center gap-10">
+              {r}
+              {i < a.length - 1 && (
+                <span
+                  className="w-1 h-1 rounded-full inline-block"
+                  style={{ background: "#B8D4A0" }}
+                />
+              )}
+            </span>
           ))}
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 // ─── About ────────────────────────────────────────────────────────────────────
 
 function About() {
-  const { ref: statsRef, visible: statsVisible } = useFadeIn()
-  const stats = [{raw:'3+',label:'Years Experience'},{raw:'50+',label:'Clients Supported'},{raw:'120+',label:'Projects Completed'},{raw:'98%',label:'Client Satisfaction'}]
-  const strengths = ['Customer-focused','Organized & reliable','Detail-oriented','Strong communicator','Problem solver','Quick learner']
+  const { ref: statsRef, visible: statsVisible } = useFadeIn();
+  const stats = [
+    { raw: "3+", label: "Years Experience" },
+    { raw: "50+", label: "Clients Supported" },
+    { raw: "120+", label: "Projects Completed" },
+    { raw: "98%", label: "Client Satisfaction" },
+  ];
+  const strengths = [
+    "Customer-focused",
+    "Organized & reliable",
+    "Detail-oriented",
+    "Strong communicator",
+    "Problem solver",
+    "Quick learner",
+  ];
   return (
-    <section id="about" className="py-24 relative overflow-hidden" style={{ background:'#FFFFFF' }}>
+    <section
+      id="about"
+      className="py-24 relative overflow-hidden"
+      style={{ background: "#FFF4F6" }}
+    >
       <Orb size={320} color="#E6F0D8" className="top-[-60px] right-[-80px]" />
-      <Arc className="absolute bottom-16 left-8 w-28 text-[#7FAE60]" opacity={0.2} />
+      <Arc
+        className="absolute bottom-16 left-8 w-28 text-[#7FAE60]"
+        opacity={0.2}
+      />
       <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-center relative z-10">
         <Reveal from="left">
           <div className="relative">
-            <div className="absolute -top-5 -left-5 w-full h-full rounded-3xl pointer-events-none" style={{ background:'#E6F0D8' }} />
-            <div className="relative z-10 rounded-3xl overflow-hidden shadow-md" style={{ background:'#D6E9C4' }}>
-              <img src={portrait2} alt="Kate Yu Villaraza" className="w-full aspect-[3/4] object-cover object-center" />
+            <div
+              className="absolute -top-5 -left-5 w-full h-full rounded-3xl pointer-events-none"
+              style={{ background: "#E6F0D8" }}
+            />
+            <div
+              className="relative z-10 rounded-3xl overflow-hidden shadow-md"
+              style={{ background: "#D6E9C4" }}
+            >
+              <img
+                src={portrait2}
+                alt="Kate Yu Villaraza"
+                className="w-full aspect-[3/4] object-cover object-center"
+              />
             </div>
-            <div ref={statsRef} className="absolute -bottom-6 -right-4 z-20 grid grid-cols-2 gap-1.5 p-4 rounded-2xl shadow-xl" style={{ background:'#3D5C2E' }}>
-              {stats.map(s => <StatCell key={s.label} raw={s.raw} label={s.label} active={statsVisible} />)}
+            <div
+              ref={statsRef}
+              className="absolute -bottom-6 -right-4 z-20 grid grid-cols-2 gap-1.5 p-4 rounded-2xl shadow-xl"
+              style={{ background: "#3D5C2E" }}
+            >
+              {stats.map((s) => (
+                <StatCell
+                  key={s.label}
+                  raw={s.raw}
+                  label={s.label}
+                  active={statsVisible}
+                />
+              ))}
             </div>
           </div>
         </Reveal>
         <div className="flex flex-col gap-6">
-          <Reveal delay={60}><p className="text-xs font-semibold uppercase tracking-widest" style={{ color:'#7FAE60' }}>About Me</p></Reveal>
-          <Reveal delay={120}><h2 className="text-3xl md:text-4xl leading-tight" style={{ fontFamily:'Playfair Display,serif', color:'#2A3824' }}>Meet Your Virtual Assistant</h2></Reveal>
-          <Reveal delay={180}><p className="text-[15px] leading-relaxed" style={{ color:'#52634A' }}>Hello! I'm Kate — a dedicated and detail-oriented Virtual Assistant passionate about helping businesses stay organized, communicate effectively, and deliver excellent customer experiences.</p></Reveal>
-          <Reveal delay={240}><p className="text-[15px] leading-relaxed" style={{ color:'#52634A' }}>I bring structure, warmth, and reliability to every engagement. Whether it's taming a chaotic inbox or supporting your customers — I've got you covered.</p></Reveal>
+          <Reveal delay={60}>
+            <p
+              className="text-xs font-semibold uppercase tracking-widest"
+              style={{ color: "#7FAE60" }}
+            >
+              About Me
+            </p>
+          </Reveal>
+          <Reveal delay={120}>
+            <h2
+              className="text-3xl md:text-4xl leading-tight"
+              style={{ fontFamily: "Playfair Display,serif", color: "#2A3824" }}
+            >
+              Meet Your Virtual Assistant
+            </h2>
+          </Reveal>
+          <Reveal delay={180}>
+            <p
+              className="text-[15px] leading-relaxed"
+              style={{ color: "#52634A" }}
+            >
+              Hello! I'm Kate — a dedicated and detail-oriented Virtual
+              Assistant passionate about helping businesses stay organized,
+              communicate effectively, and deliver excellent customer
+              experiences.
+            </p>
+          </Reveal>
+          <Reveal delay={240}>
+            <p
+              className="text-[15px] leading-relaxed"
+              style={{ color: "#52634A" }}
+            >
+              I bring structure, warmth, and reliability to every engagement.
+              Whether it's taming a chaotic inbox or supporting your customers —
+              I've got you covered.
+            </p>
+          </Reveal>
           <Reveal delay={300}>
             <div className="flex flex-wrap gap-2 mt-1">
-              {strengths.map(s => (
-                <span key={s} className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium" style={{ background:'#E6F0D8', color:'#2A3824', border:'1px solid #C8DFAF' }}>
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="w-3.5 h-3.5 shrink-0"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>{s}
+              {strengths.map((s) => (
+                <span
+                  key={s}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+                  style={{
+                    background: "#E6F0D8",
+                    color: "#2A3824",
+                    border: "1px solid #C8DFAF",
+                  }}
+                >
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2.2}
+                    className="w-3.5 h-3.5 shrink-0"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M4.5 12.75l6 6 9-13.5"
+                    />
+                  </svg>
+                  {s}
                 </span>
               ))}
             </div>
           </Reveal>
           <Reveal delay={360}>
-            <a href="#contact" className="inline-flex items-center gap-2 self-start mt-2 px-6 py-3 rounded-full text-sm font-medium text-white hover:opacity-90 transition-all" style={{ background:'linear-gradient(135deg,#7FAE60,#3D5C2E)' }}>
-              Let's Connect <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+            <a
+              href="#contact"
+              className="inline-flex items-center gap-2 self-start mt-2 px-6 py-3 rounded-full text-sm font-medium text-white hover:opacity-90 transition-all"
+              style={{ background: "linear-gradient(135deg,#FD9FAE,#D96C82)" }}
+            >
+              Let's Connect{" "}
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.8}
+                className="w-4 h-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                />
+              </svg>
             </a>
           </Reveal>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 // ─── Services ─────────────────────────────────────────────────────────────────
 
 function Services() {
-  const featured = SERVICES.filter(s => s.featured), rest = SERVICES.filter(s => !s.featured)
+  const featured = SERVICES.filter((s) => s.featured),
+    rest = SERVICES.filter((s) => !s.featured);
   return (
-    <section id="services" className="py-24" style={{ background:'#F7FAF0' }}>
+    <section id="services" className="py-24" style={{ background: "#F7FAF0" }}>
       <div className="max-w-6xl mx-auto px-6">
         <div className="max-w-xl mb-14">
-          <Reveal><p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color:'#7FAE60' }}>Services</p></Reveal>
-          <Reveal delay={80}><h2 className="text-3xl md:text-4xl leading-tight" style={{ fontFamily:'Playfair Display,serif', color:'#2A3824' }}>How I Can Help<br />Your Business</h2></Reveal>
+          <Reveal>
+            <p
+              className="text-xs font-semibold uppercase tracking-widest mb-3"
+              style={{ color: "#7FAE60" }}
+            >
+              Services
+            </p>
+          </Reveal>
+          <Reveal delay={80}>
+            <h2
+              className="text-3xl md:text-4xl leading-tight"
+              style={{ fontFamily: "Playfair Display,serif", color: "#2A3824" }}
+            >
+              How I Can Help
+              <br />
+              Your Business
+            </h2>
+          </Reveal>
         </div>
         <div className="grid md:grid-cols-2 gap-6 mb-6">
           {featured.map((s, i) => (
-            <Reveal key={s.id} delay={i*120} from={i===0?'left':'right'}>
-              <div className="rounded-3xl p-8 flex flex-col gap-5 hover:-translate-y-1 hover:shadow-md transition-all cursor-pointer h-full" style={{ background:i===0?'#E6F0D8':'#3D5C2E', border:`1px solid ${i===0?'#C8DFAF':'transparent'}` }}>
-                <div className="w-12 h-12 rounded-2xl flex items-center justify-center" style={{ background:i===0?'#3D5C2E':'#E6F0D8', color:i===0?'#F7FAF0':'#2A3824' }}>{SERVICE_ICONS[i]}</div>
+            <Reveal
+              key={s.id}
+              delay={i * 120}
+              from={i === 0 ? "left" : "right"}
+            >
+              <div
+                className="rounded-3xl p-8 flex flex-col gap-5 hover:-translate-y-1 hover:shadow-md transition-all cursor-pointer h-full"
+                style={{
+                  background: i === 0 ? "#E6F0D8" : "#3D5C2E",
+                  border: `1px solid ${i === 0 ? "#C8DFAF" : "transparent"}`,
+                }}
+              >
+                <div
+                  className="w-12 h-12 rounded-2xl flex items-center justify-center"
+                  style={{
+                    background: i === 0 ? "#3D5C2E" : "#E6F0D8",
+                    color: i === 0 ? "#F7FAF0" : "#2A3824",
+                  }}
+                >
+                  {SERVICE_ICONS[i]}
+                </div>
                 <div>
-                  <h3 className="text-xl mb-2" style={{ fontFamily:'Playfair Display,serif', color:i===0?'#2A3824':'#F7FAF0' }}>{s.title}</h3>
-                  <p className="text-sm leading-relaxed" style={{ color:i===0?'#52634A':'#B8D4A0' }}>{s.short}</p>
+                  <h3
+                    className="text-xl mb-2"
+                    style={{
+                      fontFamily: "Playfair Display,serif",
+                      color: i === 0 ? "#2A3824" : "#F7FAF0",
+                    }}
+                  >
+                    {s.title}
+                  </h3>
+                  <p
+                    className="text-sm leading-relaxed"
+                    style={{ color: i === 0 ? "#52634A" : "#B8D4A0" }}
+                  >
+                    {s.short}
+                  </p>
                 </div>
                 <ul className="grid grid-cols-2 gap-y-2 gap-x-3">
-                  {s.features.map(f => (
-                    <li key={f} className="flex items-center gap-1.5 text-xs" style={{ color:i===0?'#3D5C2E':'#D6E9C4' }}>
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} className="w-3.5 h-3.5 shrink-0"><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>{f}
+                  {s.features.map((f) => (
+                    <li
+                      key={f}
+                      className="flex items-center gap-1.5 text-xs"
+                      style={{ color: i === 0 ? "#3D5C2E" : "#D6E9C4" }}
+                    >
+                      <svg
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth={2.2}
+                        className="w-3.5 h-3.5 shrink-0"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          d="M4.5 12.75l6 6 9-13.5"
+                        />
+                      </svg>
+                      {f}
                     </li>
                   ))}
                 </ul>
@@ -308,15 +1048,52 @@ function Services() {
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {rest.map((s, i) => (
-            <Reveal key={s.id} delay={i*70}>
-              <div className="rounded-2xl p-6 flex flex-col gap-4 hover:-translate-y-1 hover:shadow-sm transition-all cursor-pointer h-full" style={{ background:'#FFFFFF', border:'1px solid #D6E9C4' }}>
-                <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background:'#E6F0D8', color:'#3D5C2E' }}>{SERVICE_ICONS[i+2]}</div>
-                <div>
-                  <h3 className="text-sm font-semibold mb-1.5" style={{ fontFamily:'Playfair Display,serif', color:'#2A3824' }}>{s.title}</h3>
-                  <p className="text-xs leading-relaxed" style={{ color:'#7A8F72' }}>{s.short}</p>
+            <Reveal key={s.id} delay={i * 70}>
+              <div
+                className="rounded-2xl p-6 flex flex-col gap-4 hover:-translate-y-1 hover:shadow-sm transition-all cursor-pointer h-full"
+                style={{ background: "#FFF4F6", border: "1px solid #D6E9C4" }}
+              >
+                <div
+                  className="w-10 h-10 rounded-xl flex items-center justify-center"
+                  style={{ background: "#E6F0D8", color: "#3D5C2E" }}
+                >
+                  {SERVICE_ICONS[i + 2]}
                 </div>
-                <span className="inline-flex items-center gap-1 text-xs font-medium mt-auto" style={{ color:'#5C8A3A' }}>
-                  Details <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={1.8} className="w-4 h-4"><path strokeLinecap="round" strokeLinejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" /></svg>
+                <div>
+                  <h3
+                    className="text-sm font-semibold mb-1.5"
+                    style={{
+                      fontFamily: "Playfair Display,serif",
+                      color: "#2A3824",
+                    }}
+                  >
+                    {s.title}
+                  </h3>
+                  <p
+                    className="text-xs leading-relaxed"
+                    style={{ color: "#7A8F72" }}
+                  >
+                    {s.short}
+                  </p>
+                </div>
+                <span
+                  className="inline-flex items-center gap-1 text-xs font-medium mt-auto"
+                  style={{ color: "#5C8A3A" }}
+                >
+                  Details{" "}
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={1.8}
+                    className="w-4 h-4"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3"
+                    />
+                  </svg>
                 </span>
               </div>
             </Reveal>
@@ -324,44 +1101,115 @@ function Services() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 // ─── Projects ─────────────────────────────────────────────────────────────────
 
 function Projects() {
-  const [filter, setFilter] = useState('All')
-  const filtered = filter==='All' ? PROJECTS : PROJECTS.filter(p => p.category===filter)
+  const [filter, setFilter] = useState("All");
+  const filtered =
+    filter === "All" ? PROJECTS : PROJECTS.filter((p) => p.category === filter);
   return (
-    <section id="projects" className="py-24" style={{ background:'#FFFFFF' }}>
+    <section id="projects" className="py-24" style={{ background: "#FFF4F6" }}>
       <div className="max-w-6xl mx-auto px-6">
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-12">
           <div>
-            <Reveal><p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color:'#7FAE60' }}>Portfolio</p></Reveal>
-            <Reveal delay={80}><h2 className="text-3xl md:text-4xl" style={{ fontFamily:'Playfair Display,serif', color:'#2A3824' }}>My Experience<br />&amp; Projects</h2></Reveal>
+            <Reveal>
+              <p
+                className="text-xs font-semibold uppercase tracking-widest mb-3"
+                style={{ color: "#7FAE60" }}
+              >
+                Portfolio
+              </p>
+            </Reveal>
+            <Reveal delay={80}>
+              <h2
+                className="text-3xl md:text-4xl"
+                style={{
+                  fontFamily: "Playfair Display,serif",
+                  color: "#2A3824",
+                }}
+              >
+                My Experience
+                <br />
+                &amp; Projects
+              </h2>
+            </Reveal>
           </div>
           <Reveal from="right">
             <div className="flex flex-wrap gap-2">
-              {PROJECT_FILTERS.map(f => (
-                <button key={f} onClick={() => setFilter(f)} className="px-4 py-1.5 rounded-full text-xs font-medium transition-all"
-                  style={{ background:filter===f?'#3D5C2E':'#E6F0D8', color:filter===f?'#F7FAF0':'#2A3824', border:'1px solid', borderColor:filter===f?'#3D5C2E':'#C8DFAF' }}>{f}</button>
+              {PROJECT_FILTERS.map((f) => (
+                <button
+                  key={f}
+                  onClick={() => setFilter(f)}
+                  className="px-4 py-1.5 rounded-full text-xs font-medium transition-all"
+                  style={{
+                    background: filter === f ? "#3D5C2E" : "#E6F0D8",
+                    color: filter === f ? "#F7FAF0" : "#2A3824",
+                    border: "1px solid",
+                    borderColor: filter === f ? "#3D5C2E" : "#C8DFAF",
+                  }}
+                >
+                  {f}
+                </button>
               ))}
             </div>
           </Reveal>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-5">
           {filtered.map((p, i) => (
-            <Reveal key={p.id} delay={i*80}>
-              <div className="rounded-2xl overflow-hidden flex flex-col group hover:-translate-y-1 transition-all hover:shadow-md h-full" style={{ border:'1px solid #D6E9C4' }}>
-                <div className="aspect-[4/3] overflow-hidden" style={{ background:'#D6E9C4' }}>
-                  <img src={p.image} alt={p.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+            <Reveal key={p.id} delay={i * 80}>
+              <div
+                className="rounded-2xl overflow-hidden flex flex-col group hover:-translate-y-1 transition-all hover:shadow-md h-full"
+                style={{ border: "1px solid #D6E9C4" }}
+              >
+                <div
+                  className="aspect-[4/3] overflow-hidden"
+                  style={{ background: "#D6E9C4" }}
+                >
+                  <img
+                    src={p.image}
+                    alt={p.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  />
                 </div>
                 <div className="p-5 flex flex-col gap-3 flex-1">
-                  <span className="text-xs font-medium px-2.5 py-1 rounded-full self-start" style={{ background:'#E6F0D8', color:'#2A3824' }}>{p.category}</span>
-                  <h3 className="text-sm font-semibold" style={{ fontFamily:'Playfair Display,serif', color:'#2A3824' }}>{p.title}</h3>
-                  <p className="text-xs leading-relaxed flex-1" style={{ color:'#7A8F72' }}>{p.description}</p>
+                  <span
+                    className="text-xs font-medium px-2.5 py-1 rounded-full self-start"
+                    style={{ background: "#E6F0D8", color: "#2A3824" }}
+                  >
+                    {p.category}
+                  </span>
+                  <h3
+                    className="text-sm font-semibold"
+                    style={{
+                      fontFamily: "Playfair Display,serif",
+                      color: "#2A3824",
+                    }}
+                  >
+                    {p.title}
+                  </h3>
+                  <p
+                    className="text-xs leading-relaxed flex-1"
+                    style={{ color: "#7A8F72" }}
+                  >
+                    {p.description}
+                  </p>
                   <div className="flex flex-wrap gap-1.5 pt-1">
-                    {p.tools.map(t => <span key={t} className="text-[10px] px-2 py-0.5 rounded-full" style={{ background:'#F7FAF0', color:'#52634A', border:'1px solid #D6E9C4' }}>{t}</span>)}
+                    {p.tools.map((t) => (
+                      <span
+                        key={t}
+                        className="text-[10px] px-2 py-0.5 rounded-full"
+                        style={{
+                          background: "#FFF4F6",
+                          color: "#52634A",
+                          border: "1px solid #D6E9C4",
+                        }}
+                      >
+                        {t}
+                      </span>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -370,91 +1218,359 @@ function Projects() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 // ─── Testimonials ─────────────────────────────────────────────────────────────
 
 function Testimonials() {
-  const [idx, setIdx] = useState(0)
-  const [paused, setPaused] = useState(false)
+  const [idx, setIdx] = useState(0);
+  const [paused, setPaused] = useState(false);
   useEffect(() => {
-    if (paused) return
-    const t = setInterval(() => setIdx(i => (i+1)%TESTIMONIALS.length), 4500)
-    return () => clearInterval(t)
-  }, [paused])
-  const t = TESTIMONIALS[idx]
+    if (paused) return;
+    const t = setInterval(
+      () => setIdx((i) => (i + 1) % TESTIMONIALS.length),
+      4500,
+    );
+    return () => clearInterval(t);
+  }, [paused]);
+  const t = TESTIMONIALS[idx];
   return (
-    <section id="testimonials" className="py-24 relative overflow-hidden" style={{ background:'#3D5C2E' }}
-      onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-      <Arc className="absolute top-12 right-16 w-40 text-[#7FAE60] rotate-90" opacity={0.15} />
-      <Arc className="absolute bottom-12 left-16 w-32 text-[#B8D4A0] -rotate-90" opacity={0.12} />
+    <section
+      id="testimonials"
+      className="py-24 relative overflow-hidden"
+      style={{ background: "#3D5C2E" }}
+      onMouseEnter={() => setPaused(true)}
+      onMouseLeave={() => setPaused(false)}
+    >
+      <Arc
+        className="absolute top-12 right-16 w-40 text-[#7FAE60] rotate-90"
+        opacity={0.15}
+      />
+      <Arc
+        className="absolute bottom-12 left-16 w-32 text-[#B8D4A0] -rotate-90"
+        opacity={0.12}
+      />
       <Dots className="absolute top-1/2 right-8 w-20 text-[#B8D4A0] -translate-y-1/2" />
       <div className="max-w-5xl mx-auto px-6 relative z-10">
         <Reveal>
           <div className="text-center mb-14">
-            <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color:'#B8D4A0' }}>Testimonials</p>
-            <h2 className="text-3xl md:text-4xl text-white" style={{ fontFamily:'Playfair Display,serif' }}>What My Clients Say</h2>
+            <p
+              className="text-xs font-semibold uppercase tracking-widest mb-3"
+              style={{ color: "#B8D4A0" }}
+            >
+              Testimonials
+            </p>
+            <h2
+              className="text-3xl md:text-4xl text-white"
+              style={{ fontFamily: "Playfair Display,serif" }}
+            >
+              What My Clients Say
+            </h2>
           </div>
         </Reveal>
-        <div className="rounded-3xl p-8 md:p-12 flex flex-col gap-8" style={{ background:'rgba(255,255,255,0.07)', border:'1px solid rgba(184,212,160,0.18)' }}>
-          <div key={idx} style={{ animation:'testimonialIn .55s cubic-bezier(.25,.8,.25,1) both' }}>
+        <div
+          className="rounded-3xl p-8 md:p-12 flex flex-col gap-8"
+          style={{
+            background: "rgba(255,255,255,0.07)",
+            border: "1px solid rgba(184,212,160,0.18)",
+          }}
+        >
+          <div
+            key={idx}
+            style={{
+              animation: "testimonialIn .55s cubic-bezier(.25,.8,.25,1) both",
+            }}
+          >
             <div className="flex gap-1 mb-6">
               {Array.from({ length: t.rating }).map((_, i) => (
-                <svg key={i} viewBox="0 0 20 20" className="w-5 h-5" fill="#C8DFAF">
+                <svg
+                  key={i}
+                  viewBox="0 0 20 20"
+                  className="w-5 h-5"
+                  fill="#C8DFAF"
+                >
                   <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                 </svg>
               ))}
             </div>
-            <blockquote className="text-xl md:text-2xl leading-relaxed text-white italic mb-8" style={{ fontFamily:'Playfair Display,serif' }}>"{t.text}"</blockquote>
+            <blockquote
+              className="text-xl md:text-2xl leading-relaxed text-white italic mb-8"
+              style={{ fontFamily: "Playfair Display,serif" }}
+            >
+              "{t.text}"
+            </blockquote>
             <div className="flex items-center justify-between flex-wrap gap-4">
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold" style={{ background:t.bg, color:'#2A3824' }}>{t.initials}</div>
+                <div
+                  className="w-12 h-12 rounded-full flex items-center justify-center text-sm font-semibold"
+                  style={{ background: t.bg, color: "#2A3824" }}
+                >
+                  {t.initials}
+                </div>
                 <div>
                   <p className="font-semibold text-white text-sm">{t.name}</p>
-                  <p className="text-xs" style={{ color:'#B8D4A0' }}>{t.role}</p>
+                  <p className="text-xs" style={{ color: "#B8D4A0" }}>
+                    {t.role}
+                  </p>
                 </div>
               </div>
-              <span className="text-xs px-3 py-1.5 rounded-full" style={{ background:'rgba(127,174,96,0.2)', color:'#B8D4A0' }}>{t.service}</span>
+              <span
+                className="text-xs px-3 py-1.5 rounded-full"
+                style={{ background: "rgba(127,174,96,0.2)", color: "#B8D4A0" }}
+              >
+                {t.service}
+              </span>
             </div>
           </div>
         </div>
         <div className="flex items-center justify-center gap-4 mt-8">
-          <button onClick={() => setIdx((idx-1+TESTIMONIALS.length)%TESTIMONIALS.length)} className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:opacity-80 text-[#F7FAF0]" style={{ background:'rgba(255,255,255,0.1)' }}>←</button>
+          <button
+            onClick={() =>
+              setIdx((idx - 1 + TESTIMONIALS.length) % TESTIMONIALS.length)
+            }
+            className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:opacity-80 text-[#F7FAF0]"
+            style={{ background: "rgba(255,255,255,0.1)" }}
+          >
+            ←
+          </button>
           <div className="flex gap-2">
-            {TESTIMONIALS.map((_, i) => <button key={i} onClick={() => setIdx(i)} className="rounded-full transition-all duration-300" style={{ width:i===idx?28:8, height:8, background:i===idx?'#C8DFAF':'rgba(255,255,255,0.2)' }} />)}
+            {TESTIMONIALS.map((_, i) => (
+              <button
+                key={i}
+                onClick={() => setIdx(i)}
+                className="rounded-full transition-all duration-300"
+                style={{
+                  width: i === idx ? 28 : 8,
+                  height: 8,
+                  background: i === idx ? "#C8DFAF" : "rgba(255,255,255,0.2)",
+                }}
+              />
+            ))}
           </div>
-          <button onClick={() => setIdx((idx+1)%TESTIMONIALS.length)} className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:opacity-80 text-[#F7FAF0]" style={{ background:'rgba(255,255,255,0.1)' }}>→</button>
+          <button
+            onClick={() => setIdx((idx + 1) % TESTIMONIALS.length)}
+            className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:opacity-80 text-[#F7FAF0]"
+            style={{ background: "rgba(255,255,255,0.1)" }}
+          >
+            →
+          </button>
         </div>
         <div className="flex justify-center mt-4">
-          <div className="w-32 h-0.5 rounded-full overflow-hidden" style={{ background:'rgba(255,255,255,0.12)' }}>
-            <div key={`${idx}-${paused}`} className="h-full rounded-full" style={{ background:'#B8D4A0', animation:paused?'none':'progressBar 4.5s linear forwards' }} />
+          <div
+            className="w-32 h-0.5 rounded-full overflow-hidden"
+            style={{ background: "rgba(255,255,255,0.12)" }}
+          >
+            <div
+              key={`${idx}-${paused}`}
+              className="h-full rounded-full"
+              style={{
+                background: "#B8D4A0",
+                animation: paused ? "none" : "progressBar 4.5s linear forwards",
+              }}
+            />
           </div>
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 // ─── Tools ────────────────────────────────────────────────────────────────────
 
+// Official / Brand identifier key map for `@iconify-json/logos`
+const TOOL_LOGOS: Record<string, string> = {
+  "Google Workspace": "google",
+  "Google Calendar": "google-calendar",
+  Gmail: "google-gmail",
+  Outlook: "microsoft-outlook",
+  "Microsoft Office": "microsoft-icon",
+  "Microsoft Teams": "microsoft-teams",
+  Teams: "microsoft-teams",
+  Notion: "notion-icon",
+  Trello: "trello",
+  Slack: "slack-icon",
+  Zoom: "zoom-icon",
+  Zendesk: "zendesk",
+  Freshdesk: "freshdesk",
+  Intercom: "intercom",
+  HubSpot: "hubspot",
+  LiveChat: "livechat",
+};
+
+// Sleek minimal vector line icons for skills categories
+const SKILL_ICONS: Record<string, React.ReactNode> = {
+  "Customer Service": (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className="w-4 h-4 text-[#3D5C2E]"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M18 18.72a9.094 9.094 0 003.741-.479 3 3 0 00-4.682-2.72m.94 3.198l.001.031c0 .225-.012.447-.037.666A11.944 11.944 0 0112 21c-2.17 0-4.207-.576-5.963-1.584A6.062 6.062 0 016 18.719m12 0a5.971 5.971 0 00-.941-3.197m0 0A5.995 5.995 0 0012 12.75a5.995 5.995 0 00-5.058 2.772m0 0a3 3 0 00-4.681 2.72 8.986 8.986 0 003.74.477m.94-3.197a5.971 5.971 0 00-.94 3.197M15 6.75a3 3 0 11-6 0 3 3 0 016 0zm6 3a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0zm-13.5 0a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z"
+      />
+    </svg>
+  ),
+  "Email Management": (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className="w-4 h-4 text-[#3D5C2E]"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M21.75 6.75v10.5a2.25 2.25 0 01-2.25 2.25h-15a2.25 2.25 0 01-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0019.5 4.5h-15a2.25 2.25 0 00-2.25 2.25m19.5 0v.243a2.25 2.25 0 01-1.07 1.916l-7.5 4.615a2.25 2.25 0 01-2.36 0L3.32 8.91a2.25 2.25 0 01-1.07-1.916V6.75"
+      />
+    </svg>
+  ),
+  "Admin Support": (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className="w-4 h-4 text-[#3D5C2E]"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9 12h3.75M9 15h3.75M9 18h3.75m3 .75H18a2.25 2.25 0 002.25-2.25V6.108c0-1.135-.845-2.098-1.976-2.192a48.424 48.424 0 00-1.123-.08m-5.801 0c-.065.21-.1.433-.1.664 0 .414.336.75.75.75h4.5a.75.75 0 00.75-.75 2.25 2.25 0 00-.1-.664m-5.8 0A2.251 2.251 0 0113.5 2.25H15c1.012 0 1.867.668 2.15 1.586m-5.8 0c-.376.023-.75.05-1.124.08C9.095 4.01 8.25 4.973 8.25 6.108V8.25m0 0H4.875c-.621 0-1.125.504-1.125 1.125v11.25c0 .621.504 1.125 1.125 1.125h9.75c.621 0 1.125-.504 1.125-1.125V9.375c0-.621-.504-1.125-1.125-1.125H8.25z"
+      />
+    </svg>
+  ),
+  "Data Entry": (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className="w-4 h-4 text-[#3D5C2E]"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3.375 19.5h17.25m-17.25 0a1.125 1.125 0 01-1.125-1.125M3.375 19.5h1.5C5.496 19.5 6 18.996 6 18.375m-3.75 0V5.625m0 12.75v-1.5c0-.621.504-1.125 1.125-1.125m18.375 2.625V5.625m0 12.75c0 .621-.504 1.125-1.125 1.125m1.125-1.125v-1.5c0-.621-.504-1.125-1.125-1.125m-16.5-9.75h16.5m-16.5 0a1.125 1.125 0 01-1.125-1.125v-1.5c0-.621.504-1.125 1.125-1.125m16.5 0c.621 0 1.125.504 1.125 1.125v1.5c0 .621-.504 1.125-1.125 1.125m-16.5 0h16.5"
+      />
+    </svg>
+  ),
+  "Time Management": (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className="w-4 h-4 text-[#3D5C2E]"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z"
+      />
+    </svg>
+  ),
+  Organization: (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={1.8}
+      className="w-4 h-4 text-[#3D5C2E]"
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M3.75 6A2.25 2.25 0 016 3.75h2.25A2.25 2.25 0 0110.5 6v2.25a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 6zM3.75 15.75A2.25 2.25 0 016 13.5h2.25a2.25 2.25 0 012.25 2.25V18a2.25 2.25 0 01-2.25 2.25H6A2.25 2.25 0 013.75 18v-2.25zM13.5 6a2.25 2.25 0 012.25-2.25H18A2.25 2.25 0 0120.25 6v2.25A2.25 2.25 0 0118 10.5h-2.25a2.25 2.25 0 01-2.25-2.25V6zM13.5 15.75a2.25 2.25 0 012.25-2.25H18a2.25 2.25 0 012.25 2.25V18A2.25 2.25 0 0118 20.25h-2.25A2.25 2.25 0 0113.5 18v-2.25z"
+      />
+    </svg>
+  ),
+};
+
+function ToolLogo({ name }: { name: string }) {
+  const logoKey = TOOL_LOGOS[name];
+  const icon = logoKey ? brandIcons.icons[logoKey] : undefined;
+
+  if (icon) {
+    return (
+      <svg
+        viewBox={`0 0 ${icon.width ?? 24} ${icon.height ?? 24}`}
+        aria-hidden="true"
+        className="w-5 h-5"
+        dangerouslySetInnerHTML={{ __html: icon.body }}
+      />
+    );
+  }
+
+  if (SKILL_ICONS[name]) {
+    return <span aria-hidden="true">{SKILL_ICONS[name]}</span>;
+  }
+
+  return (
+    <span
+      className="w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-semibold"
+      style={{ background: "#D6E9C4", color: "#3D5C2E" }}
+      aria-hidden="true"
+    >
+      {name.charAt(0)}
+    </span>
+  );
+}
+
 function Tools() {
   return (
-    <section id="tools" className="py-24" style={{ background:'#F7FAF0' }}>
+    <section id="tools" className="py-24" style={{ background: "#F7FAF0" }}>
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-xl mx-auto mb-14">
-          <Reveal><p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color:'#7FAE60' }}>Skills & Tools</p></Reveal>
-          <Reveal delay={80}><h2 className="text-3xl md:text-4xl" style={{ fontFamily:'Playfair Display,serif', color:'#2A3824' }}>My Toolkit</h2></Reveal>
+          <Reveal>
+            <p
+              className="text-xs font-semibold uppercase tracking-widest mb-3"
+              style={{ color: "#7FAE60" }}
+            >
+              Skills & Tools
+            </p>
+          </Reveal>
+          <Reveal delay={80}>
+            <h2
+              className="text-3xl md:text-4xl"
+              style={{ fontFamily: "Playfair Display,serif", color: "#2A3824" }}
+            >
+              My Toolkit
+            </h2>
+          </Reveal>
         </div>
         <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {Object.entries(TOOLS).map(([cat, items], ci) => (
-            <Reveal key={cat} delay={ci*80}>
-              <div className="rounded-2xl p-6 flex flex-col gap-4 h-full" style={{ background:'#FFFFFF', border:'1px solid #D6E9C4' }}>
-                <h3 className="text-xs font-semibold uppercase tracking-widest" style={{ color:'#5C8A3A' }}>{cat}</h3>
+            <Reveal key={cat} delay={ci * 80}>
+              <div
+                className="rounded-2xl p-6 flex flex-col gap-4 h-full"
+                style={{ background: "#FFF4F6", border: "1px solid #D6E9C4" }}
+              >
+                <h3
+                  className="text-xs font-semibold uppercase tracking-widest"
+                  style={{ color: "#5C8A3A" }}
+                >
+                  {cat}
+                </h3>
                 <div className="flex flex-col gap-2">
-                  {items.map(item => (
-                    <div key={item} className="flex items-center gap-2.5 py-1.5 px-3 rounded-xl text-sm transition-colors hover:bg-[#FDF5F8]" style={{ background:'#E6F0D8', color:'#2A3824' }}>
-                      <span className="w-1.5 h-1.5 rounded-full shrink-0" style={{ background:'#7FAE60' }} />{item}
+                  {items.map((item) => (
+                    <div
+                      key={item}
+                      className="flex items-center gap-2.5 py-1.5 px-3 rounded-xl text-sm transition-colors hover:bg-[#FDF5F8]"
+                      style={{ background: "#E6F0D8", color: "#2A3824" }}
+                    >
+                      <span
+                        className="w-6 h-6 rounded-lg shrink-0 flex items-center justify-center bg-[#FFF4F6] shadow-sm"
+                        aria-hidden="true"
+                      >
+                        <ToolLogo name={item} />
+                      </span>
+                      <span>{item}</span>
                     </div>
                   ))}
                 </div>
@@ -464,40 +1580,98 @@ function Tools() {
         </div>
       </div>
     </section>
-  )
+  );
 }
 
 // ─── Contact ──────────────────────────────────────────────────────────────────
 
 function Contact() {
-  const [form, setForm] = useState({ name:'', email:'', service:'', message:'' })
-  const [sent, setSent] = useState(false)
-  const input: React.CSSProperties = { background:'#FFFFFF', border:'1px solid #D6E9C4', borderRadius:12, color:'#2A3824', fontFamily:'DM Sans,sans-serif', fontSize:14, padding:'12px 16px', outline:'none', width:'100%' }
+  const [form, setForm] = useState({
+    name: "",
+    email: "",
+    service: "",
+    message: "",
+  });
+  const [sent, setSent] = useState(false);
+  const input: React.CSSProperties = {
+    background: "#FFF4F6",
+    border: "1px solid #D6E9C4",
+    borderRadius: 12,
+    color: "#2A3824",
+    fontFamily: "DM Sans,sans-serif",
+    fontSize: 14,
+    padding: "12px 16px",
+    outline: "none",
+    width: "100%",
+  };
   const contactItems = [
-    { icon:'✉', label:'Email', value:'kate@katevillaraza.co' },
-    { icon:'📞', label:'Phone', value:'+63 917 123 4567' },
-    { icon:'📍', label:'Location', value:'Manila, Philippines' },
-    { icon:'💼', label:'LinkedIn', value:'linkedin.com/in/katevillaraza' },
-  ]
+    { icon: "✉", label: "Email", value: "kate@katevillaraza.co" },
+    { icon: "📞", label: "Phone", value: "+63 917 123 4567" },
+    { icon: "📍", label: "Location", value: "Manila, Philippines" },
+    { icon: "💼", label: "LinkedIn", value: "linkedin.com/in/katevillaraza" },
+  ];
   return (
-    <section id="contact" className="py-24 relative overflow-hidden" style={{ background:'#B8D4A0' }}>
+    <section
+      id="contact"
+      className="py-24 relative overflow-hidden"
+      style={{ background: "#B8D4A0" }}
+    >
       <Dots className="absolute top-16 right-16 w-20 text-[#3D5C2E]" />
-      <Arc className="absolute top-8 left-8 w-32 text-[#3D5C2E]" opacity={0.14} />
+      <Arc
+        className="absolute top-8 left-8 w-32 text-[#3D5C2E]"
+        opacity={0.14}
+      />
       <div className="max-w-6xl mx-auto px-6 grid md:grid-cols-2 gap-16 items-start relative z-10">
         <Reveal from="left">
           <div className="flex flex-col gap-8">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-widest mb-3" style={{ color:'#3D5C2E' }}>Get in Touch</p>
-              <h2 className="text-3xl md:text-4xl leading-tight" style={{ fontFamily:'Playfair Display,serif', color:'#2A3824' }}>Let's Work<br />Together!</h2>
+              <p
+                className="text-xs font-semibold uppercase tracking-widest mb-3"
+                style={{ color: "#3D5C2E" }}
+              >
+                Get in Touch
+              </p>
+              <h2
+                className="text-3xl md:text-4xl leading-tight"
+                style={{
+                  fontFamily: "Playfair Display,serif",
+                  color: "#2A3824",
+                }}
+              >
+                Let's Work
+                <br />
+                Together!
+              </h2>
             </div>
-            <p className="text-[15px] leading-relaxed" style={{ color:'#2A3824', opacity:0.75 }}>Ready to make your business more organized and productive? Let's connect and discuss how I can help you reclaim your time.</p>
+            <p
+              className="text-[15px] leading-relaxed"
+              style={{ color: "#2A3824", opacity: 0.75 }}
+            >
+              Ready to make your business more organized and productive? Let's
+              connect and discuss how I can help you reclaim your time.
+            </p>
             <div className="flex flex-col gap-4">
-              {contactItems.map(c => (
+              {contactItems.map((c) => (
                 <div key={c.label} className="flex items-center gap-4">
-                  <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg" style={{ background:'#E6F0D8' }}>{c.icon}</div>
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center text-lg"
+                    style={{ background: "#E6F0D8" }}
+                  >
+                    {c.icon}
+                  </div>
                   <div>
-                    <p className="text-xs font-medium opacity-60" style={{ color:'#2A3824' }}>{c.label}</p>
-                    <p className="text-sm font-medium" style={{ color:'#2A3824' }}>{c.value}</p>
+                    <p
+                      className="text-xs font-medium opacity-60"
+                      style={{ color: "#2A3824" }}
+                    >
+                      {c.label}
+                    </p>
+                    <p
+                      className="text-sm font-medium"
+                      style={{ color: "#2A3824" }}
+                    >
+                      {c.value}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -505,67 +1679,211 @@ function Contact() {
           </div>
         </Reveal>
         <Reveal from="right" delay={100}>
-          <div className="rounded-3xl p-8" style={{ background:'#F7FAF0' }}>
+          <div className="rounded-3xl p-8" style={{ background: "#F7FAF0" }}>
             {sent ? (
               <div className="flex flex-col items-center text-center gap-4 py-8">
-                <div className="w-16 h-16 rounded-full flex items-center justify-center text-2xl" style={{ background:'#E6F0D8' }}>✓</div>
-                <h3 className="text-xl" style={{ fontFamily:'Playfair Display,serif', color:'#2A3824' }}>Message Sent!</h3>
-                <p className="text-sm" style={{ color:'#7A8F72' }}>Thank you! I'll get back to you within 24 hours.</p>
-                <button onClick={() => { setSent(false); setForm({name:'',email:'',service:'',message:''}) }} className="text-sm font-medium underline" style={{ color:'#3D5C2E' }}>Send another message</button>
+                <div
+                  className="w-16 h-16 rounded-full flex items-center justify-center text-2xl"
+                  style={{ background: "#E6F0D8" }}
+                >
+                  ✓
+                </div>
+                <h3
+                  className="text-xl"
+                  style={{
+                    fontFamily: "Playfair Display,serif",
+                    color: "#2A3824",
+                  }}
+                >
+                  Message Sent!
+                </h3>
+                <p className="text-sm" style={{ color: "#7A8F72" }}>
+                  Thank you! I'll get back to you within 24 hours.
+                </p>
+                <button
+                  onClick={() => {
+                    setSent(false);
+                    setForm({ name: "", email: "", service: "", message: "" });
+                  }}
+                  className="text-sm font-medium underline"
+                  style={{ color: "#3D5C2E" }}
+                >
+                  Send another message
+                </button>
               </div>
             ) : (
-              <form onSubmit={e => { e.preventDefault(); setSent(true) }} className="flex flex-col gap-4">
-                <h3 className="text-lg mb-2" style={{ fontFamily:'Playfair Display,serif', color:'#2A3824' }}>Send a Message</h3>
-                <input style={input} placeholder="Full Name" value={form.name} onChange={e => setForm({...form,name:e.target.value})} required />
-                <input style={input} type="email" placeholder="Email Address" value={form.email} onChange={e => setForm({...form,email:e.target.value})} required />
-                <select style={{...input,color:form.service?'#2A3824':'#9ca3af'}} value={form.service} onChange={e => setForm({...form,service:e.target.value})} required>
-                  <option value="" disabled>Service Interested In</option>
-                  {SERVICES.map(s => <option key={s.id} value={s.title}>{s.title}</option>)}
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  setSent(true);
+                }}
+                className="flex flex-col gap-4"
+              >
+                <h3
+                  className="text-lg mb-2"
+                  style={{
+                    fontFamily: "Playfair Display,serif",
+                    color: "#2A3824",
+                  }}
+                >
+                  Send a Message
+                </h3>
+                <input
+                  style={input}
+                  placeholder="Full Name"
+                  value={form.name}
+                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  required
+                />
+                <input
+                  style={input}
+                  type="email"
+                  placeholder="Email Address"
+                  value={form.email}
+                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  required
+                />
+                <select
+                  style={{
+                    ...input,
+                    color: form.service ? "#2A3824" : "#9ca3af",
+                  }}
+                  value={form.service}
+                  onChange={(e) =>
+                    setForm({ ...form, service: e.target.value })
+                  }
+                  required
+                >
+                  <option value="" disabled>
+                    Service Interested In
+                  </option>
+                  {SERVICES.map((s) => (
+                    <option key={s.id} value={s.title}>
+                      {s.title}
+                    </option>
+                  ))}
                 </select>
-                <textarea style={{...input,resize:'none',minHeight:110}} placeholder="Your Message" value={form.message} onChange={e => setForm({...form,message:e.target.value})} required />
-                <button type="submit" className="w-full py-3.5 rounded-full text-sm font-medium text-white hover:opacity-90 transition-all mt-1" style={{ background:'linear-gradient(135deg,#7FAE60,#3D5C2E)' }}>Send Message</button>
+                <textarea
+                  style={{ ...input, resize: "none", minHeight: 110 }}
+                  placeholder="Your Message"
+                  value={form.message}
+                  onChange={(e) =>
+                    setForm({ ...form, message: e.target.value })
+                  }
+                  required
+                />
+                <button
+                  type="submit"
+                  className="w-full py-3.5 rounded-full text-sm font-medium text-white hover:opacity-90 transition-all mt-1"
+                  style={{
+                    background: "linear-gradient(135deg,#FD9FAE,#D96C82)",
+                  }}
+                >
+                  Send Message
+                </button>
               </form>
             )}
           </div>
         </Reveal>
       </div>
     </section>
-  )
+  );
 }
 
 // ─── Footer ───────────────────────────────────────────────────────────────────
 
 function Footer() {
   return (
-    <footer className="py-12" style={{ background:'#2A3824' }}>
+    <footer className="py-12" style={{ background: "#2A3824" }}>
       <div className="max-w-6xl mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-8 mb-10">
           <div className="md:col-span-2 flex flex-col gap-4">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold" style={{ background:'#E6F0D8', color:'#2A3824', fontFamily:'Playfair Display,serif' }}>KY</div>
-              <span className="font-semibold text-sm text-white">Kate Yu Villaraza</span>
+              <div
+                className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold"
+                style={{
+                  background: "#E6F0D8",
+                  color: "#2A3824",
+                  fontFamily: "Playfair Display,serif",
+                }}
+              >
+                KY
+              </div>
+              <span className="font-semibold text-sm text-white">
+                Kate Yu Villaraza
+              </span>
             </div>
-            <p className="text-sm leading-relaxed" style={{ color:'#7FAE60' }}>Dedicated Virtual Assistant helping businesses stay organized, connected, and focused. Available for new clients worldwide.</p>
+            <p className="text-sm leading-relaxed" style={{ color: "#7FAE60" }}>
+              Dedicated Virtual Assistant helping businesses stay organized,
+              connected, and focused. Available for new clients worldwide.
+            </p>
             <div className="flex gap-3">
-              {['LinkedIn','Instagram','Twitter'].map(s => <a key={s} href="#" className="px-3 py-1.5 rounded-lg text-xs font-medium hover:opacity-80" style={{ background:'rgba(127,174,96,0.15)', color:'#B8D4A0' }}>{s}</a>)}
+              {["LinkedIn", "Instagram", "Twitter"].map((s) => (
+                <a
+                  key={s}
+                  href="#"
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium hover:opacity-80"
+                  style={{
+                    background: "rgba(127,174,96,0.15)",
+                    color: "#B8D4A0",
+                  }}
+                >
+                  {s}
+                </a>
+              ))}
             </div>
           </div>
           <div className="flex flex-col gap-3">
-            <h4 className="text-xs font-semibold uppercase tracking-widest" style={{ color:'#7FAE60' }}>Quick Links</h4>
-            {NAV_LINKS.map(l => <a key={l.href} href={l.href} className="text-sm hover:text-white transition-colors" style={{ color:'rgba(247,250,240,0.55)' }}>{l.label}</a>)}
+            <h4
+              className="text-xs font-semibold uppercase tracking-widest"
+              style={{ color: "#7FAE60" }}
+            >
+              Quick Links
+            </h4>
+            {NAV_LINKS.map((l) => (
+              <a
+                key={l.href}
+                href={l.href}
+                className="text-sm hover:text-white transition-colors"
+                style={{ color: "rgba(247,250,240,0.55)" }}
+              >
+                {l.label}
+              </a>
+            ))}
           </div>
           <div className="flex flex-col gap-3">
-            <h4 className="text-xs font-semibold uppercase tracking-widest" style={{ color:'#7FAE60' }}>Services</h4>
-            {SERVICES.slice(0,5).map(s => <a key={s.id} href="#services" className="text-sm hover:text-white transition-colors" style={{ color:'rgba(247,250,240,0.55)' }}>{s.title}</a>)}
+            <h4
+              className="text-xs font-semibold uppercase tracking-widest"
+              style={{ color: "#7FAE60" }}
+            >
+              Services
+            </h4>
+            {SERVICES.slice(0, 5).map((s) => (
+              <a
+                key={s.id}
+                href="#services"
+                className="text-sm hover:text-white transition-colors"
+                style={{ color: "rgba(247,250,240,0.55)" }}
+              >
+                {s.title}
+              </a>
+            ))}
           </div>
         </div>
-        <div className="pt-6 flex flex-col md:flex-row items-center justify-between gap-3" style={{ borderTop:'1px solid rgba(255,255,255,0.07)' }}>
-          <p className="text-xs" style={{ color:'rgba(247,250,240,0.35)' }}>© 2026 Kate Yu Villaraza. All Rights Reserved.</p>
-          <p className="text-xs" style={{ color:'rgba(247,250,240,0.35)' }}>Virtual Assistant · Customer Service · Email Management</p>
+        <div
+          className="pt-6 flex flex-col md:flex-row items-center justify-between gap-3"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.07)" }}
+        >
+          <p className="text-xs" style={{ color: "rgba(247,250,240,0.35)" }}>
+            © 2026 Kate Yu Villaraza. All Rights Reserved.
+          </p>
+          <p className="text-xs" style={{ color: "rgba(247,250,240,0.35)" }}>
+            Virtual Assistant · Customer Service · Email Management
+          </p>
         </div>
       </div>
     </footer>
-  )
+  );
 }
 
 // ─── Portfolio ────────────────────────────────────────────────────────────────
@@ -583,5 +1901,5 @@ export default function Portfolio() {
       <Contact />
       <Footer />
     </div>
-  )
+  );
 }
