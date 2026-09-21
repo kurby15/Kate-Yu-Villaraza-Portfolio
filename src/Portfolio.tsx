@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { icons as brandIcons } from "@iconify-json/logos";
 import portrait1 from "./imports/image-1.png";
 import portrait2 from "./imports/image-2.png";
+import resumePdf from "./imports/Resume_Villaraza Kaycee.pdf";
 
 // ─── Palette: matcha green ────────────────────────────────────────────────────
 // bg: #F7FAF0  matcha: #7FAE60  deep: #3D5C2E  light: #B8D4A0  text: #2A3824
@@ -601,10 +602,15 @@ function Nav() {
 
 function Hero() {
   const { ref, visible } = useFadeIn(0.05);
-  const resumeUrl = "/Kaycee-Villaraza-CV.pdf";
 
-  const handleOpenResume = () => {
-    window.open(resumeUrl, "_blank", "noopener,noreferrer");
+  const handleDownloadResume = () => {
+    const link = document.createElement("a");
+    link.href = resumePdf;
+    link.download = "Resume_Villaraza Kaycee.pdf";
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -710,11 +716,11 @@ function Hero() {
               </svg>
             </a>
             <button
-              onClick={handleOpenResume}
+              onClick={handleDownloadResume}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium border transition-all hover:bg-[#FDE3E7]"
               style={{ borderColor: "#FD9FAE", color: "#8F4051" }}
             >
-              View Resume
+              Download Resume
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
