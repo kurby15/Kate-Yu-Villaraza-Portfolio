@@ -704,8 +704,8 @@ function Hero() {
               </svg>
             </a>
             <a
-              href="/Kaycee-Villaraza-CV.html"
-              download="Kaycee-Villaraza-CV.html"
+              href="/Kaycee-Villaraza-CV.pdf"
+              download="Kaycee-Villaraza-CV.pdf"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium border transition-all hover:bg-[#FDE3E7]"
               style={{ borderColor: "#FD9FAE", color: "#8F4051" }}
             >
