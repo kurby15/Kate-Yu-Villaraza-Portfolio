@@ -1630,6 +1630,7 @@ function Tools() {
 // ─── Contact ──────────────────────────────────────────────────────────────────
 
 function Contact() {
+  const receiverEmail = "Katieyu2020@gmail.com";
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -1739,10 +1740,11 @@ function Contact() {
                     color: "#2A3824",
                   }}
                 >
-                  Message Sent!
+                  Email Draft Ready!
                 </h3>
                 <p className="text-sm" style={{ color: "#7A8F72" }}>
-                  Thank you! I'll get back to you within 24 hours.
+                  Your email app should now have a prepared message addressed to
+                  me. Please send it to complete your inquiry.
                 </p>
                 <button
                   onClick={() => {
@@ -1759,6 +1761,15 @@ function Contact() {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
+                  const subject = `Portfolio inquiry from ${form.name}`;
+                  const body = [
+                    `Name: ${form.name}`,
+                    `Email: ${form.email}`,
+                    `Service: ${form.service}`,
+                    "",
+                    form.message,
+                  ].join("\n");
+                  window.location.href = `mailto:${receiverEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
                   setSent(true);
                 }}
                 className="flex flex-col gap-4"
