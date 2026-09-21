@@ -1649,9 +1649,9 @@ function Contact() {
     width: "100%",
   };
   const contactItems = [
-    { icon: "✉", label: "Email", value: "kate@katevillaraza.co" },
-    { icon: "📞", label: "Phone", value: "+63 917 123 4567" },
-    { icon: "📍", label: "Location", value: "Manila, Philippines" },
+    { icon: "✉", label: "Email", value: "Katieyu2020@gmail.com" },
+    { icon: "📞", label: "Phone", value: "09989714156" },
+    { icon: "📍", label: "Location", value: "Pasig, Philippines" },
     { icon: "💼", label: "LinkedIn", value: "linkedin.com/in/katevillaraza" },
   ];
   return (
