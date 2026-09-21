@@ -17,10 +17,12 @@ export default defineConfig(({ mode }) => {
   const emitSourcemaps = mode === "development";
 
   return {
-    // Relative URLs work on both a GitHub Pages project path and a custom domain.
+    // Vercel serves from the root; relative URLs support the GitHub Pages project path.
     base: process.env.FIGMA_PUBLIC_URL
       ? `${process.env.FIGMA_PUBLIC_URL}/`
-      : "./",
+      : process.env.VERCEL
+        ? "/"
+        : "./",
     build: {
       sourcemap: emitSourcemaps ? "inline" : false,
       minify: !emitSourcemaps,
