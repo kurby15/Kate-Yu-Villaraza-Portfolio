@@ -710,6 +710,27 @@ function Hero() {
             >
               View My Services
             </a>
+            <a
+              href="/Kaycee-Villaraza-CV.html"
+              download="Kaycee-Villaraza-CV.html"
+              className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium border transition-all hover:bg-[#FDE3E7]"
+              style={{ borderColor: "#FD9FAE", color: "#8F4051" }}
+            >
+              Download CV
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.8}
+                className="w-4 h-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"
+                />
+              </svg>
+            </a>
           </div>
           <div
             className="inline-flex items-center gap-3 self-start px-4 py-3 rounded-2xl"
