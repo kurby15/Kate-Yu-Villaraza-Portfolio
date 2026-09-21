@@ -707,7 +707,9 @@ function Hero() {
             </a>
             <a
               href={resumeUrl}
-              download="Kaycee-Villaraza-CV.pdf"
+              download="resume-villaraza.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium border transition-all hover:bg-[#FDE3E7]"
               style={{ borderColor: "#FD9FAE", color: "#8F4051" }}
             >
@@ -1422,7 +1424,6 @@ function Testimonials() {
 
 // ─── Tools ────────────────────────────────────────────────────────────────────
 
-// Official / Brand identifier key map for `@iconify-json/logos`
 const TOOL_LOGOS: Record<string, string> = {
   "Google Workspace": "google",
   "Google Calendar": "google-calendar",
@@ -1442,7 +1443,6 @@ const TOOL_LOGOS: Record<string, string> = {
   LiveChat: "livechat",
 };
 
-// Sleek minimal vector line icons for skills categories
 const SKILL_ICONS: Record<string, React.ReactNode> = {
   "Customer Service": (
     <svg
