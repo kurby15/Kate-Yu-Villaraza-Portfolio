@@ -601,6 +601,12 @@ function Nav() {
 
 function Hero() {
   const { ref, visible } = useFadeIn(0.05);
+  const resumeUrl = "/Kaycee-Villaraza-CV.pdf";
+
+  const handleOpenResume = () => {
+    window.open(resumeUrl, "_blank", "noopener,noreferrer");
+  };
+
   return (
     <section
       id="home"
@@ -703,13 +709,12 @@ function Hero() {
                 />
               </svg>
             </a>
-            <a
-              href="/Kaycee-Villaraza-CV.pdf"
-              download="Kaycee-Villaraza-CV.pdf"
+            <button
+              onClick={handleOpenResume}
               className="inline-flex items-center gap-2 px-6 py-3 rounded-full text-sm font-medium border transition-all hover:bg-[#FDE3E7]"
               style={{ borderColor: "#FD9FAE", color: "#8F4051" }}
             >
-              Download CV
+              View Resume
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
@@ -723,7 +728,7 @@ function Hero() {
                   d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"
                 />
               </svg>
-            </a>
+            </button>
           </div>
           <div
             className="inline-flex items-center gap-3 self-start px-4 py-3 rounded-2xl"
