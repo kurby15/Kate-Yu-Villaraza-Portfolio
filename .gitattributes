@@ -144,3 +144,8 @@
 *.stl                filter=lfs diff=lfs merge=lfs -text
 *.nc                 filter=lfs diff=lfs merge=lfs -text
 *.mat                filter=lfs diff=lfs merge=lfs -text
+
+# Keep the portfolio portraits as regular Git blobs so Vercel can serve them
+# without requiring Git LFS during deployment.
+src/imports/image-1.png -filter -diff -merge
+src/imports/image-2.png -filter -diff -merge
