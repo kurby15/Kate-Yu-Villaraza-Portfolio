@@ -97,6 +97,7 @@ section[id] {
 .theme-dark header {
   background: rgba(21, 33, 25, 0.92) !important;
   border-color: #344d39 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18) !important;
 }
 
 .theme-dark section {
@@ -201,4 +202,22 @@ section[id] {
 .theme-dark .hero-specialization .specialization-email {
   background: #5b3440 !important;
   color: #fde1e6 !important;
+}
+
+.theme-dark #testimonials .testimonial-control {
+  background: rgba(244, 247, 237, 0.12) !important;
+  border: 1px solid rgba(214, 233, 196, 0.28);
+  color: #f4f7ed !important;
+}
+
+.theme-dark #testimonials .testimonial-dot {
+  background: rgba(214, 233, 196, 0.3) !important;
+}
+
+.theme-dark #testimonials .testimonial-dot-active {
+  background: #fd9fae !important;
+}
+
+.theme-dark #testimonials .testimonial-progress {
+  background: rgba(214, 233, 196, 0.18) !important;
 }

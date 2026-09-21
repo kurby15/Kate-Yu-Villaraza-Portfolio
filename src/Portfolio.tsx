@@ -522,9 +522,12 @@ function Nav({
     <header
       className="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
       style={{
-        background: scrolled ? "rgba(247,250,240,0.94)" : "transparent",
-        backdropFilter: scrolled ? "blur(14px)" : "none",
-        borderBottom: scrolled ? "1px solid #D6E9C4" : "none",
+        background: scrolled
+          ? "rgba(247,250,240,0.88)"
+          : "rgba(247,250,240,0.68)",
+        backdropFilter: "blur(18px) saturate(140%)",
+        borderBottom: "1px solid rgba(214,233,196,0.72)",
+        boxShadow: scrolled ? "0 8px 24px rgba(42,56,36,0.08)" : "none",
       }}
     >
       <nav className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
@@ -1514,7 +1517,7 @@ function Testimonials() {
             onClick={() =>
               setIdx((idx - 1 + TESTIMONIALS.length) % TESTIMONIALS.length)
             }
-            className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:opacity-80 text-[#F7FAF0]"
+            className="testimonial-control w-10 h-10 rounded-full flex items-center justify-center transition-all hover:opacity-80 text-[#F7FAF0]"
             style={{ background: "rgba(255,255,255,0.1)" }}
           >
             ←
@@ -1524,7 +1527,7 @@ function Testimonials() {
               <button
                 key={i}
                 onClick={() => setIdx(i)}
-                className="rounded-full transition-all duration-300"
+                className={`testimonial-dot rounded-full transition-all duration-300 ${i === idx ? "testimonial-dot-active" : ""}`}
                 style={{
                   width: i === idx ? 28 : 8,
                   height: 8,
@@ -1535,7 +1538,7 @@ function Testimonials() {
           </div>
           <button
             onClick={() => setIdx((idx + 1) % TESTIMONIALS.length)}
-            className="w-10 h-10 rounded-full flex items-center justify-center transition-all hover:opacity-80 text-[#F7FAF0]"
+            className="testimonial-control w-10 h-10 rounded-full flex items-center justify-center transition-all hover:opacity-80 text-[#F7FAF0]"
             style={{ background: "rgba(255,255,255,0.1)" }}
           >
             →
@@ -1543,7 +1546,7 @@ function Testimonials() {
         </div>
         <div className="flex justify-center mt-4">
           <div
-            className="w-32 h-0.5 rounded-full overflow-hidden"
+            className="testimonial-progress w-32 h-0.5 rounded-full overflow-hidden"
             style={{ background: "rgba(255,255,255,0.12)" }}
           >
             <div
