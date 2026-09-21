@@ -3,7 +3,13 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "node:path";
 
-import siteConfiguration from "./.figma/make/site.json";
+const siteConfiguration: FigmaSiteConfiguration = {
+  title: "Kate Yu Villaraza | Virtual Assistant",
+  description:
+    "Reliable customer service, email management, and administrative support.",
+  language: "en",
+  robots: { index: true },
+};
 
 // Vite config — https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
