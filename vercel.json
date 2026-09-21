@@ -5,8 +5,8 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
-      "source": "/Kaycee-Villaraza-CV.pdf",
-      "destination": "/Kaycee-Villaraza-CV.pdf"
+      "source": "/resume-villaraza.pdf",
+      "destination": "/resume-villaraza.pdf"
     },
     {
       "source": "/(.*)",

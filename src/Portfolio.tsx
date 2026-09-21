@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react";
 import { icons as brandIcons } from "@iconify-json/logos";
 import portrait1 from "./imports/image-1.png";
 import portrait2 from "./imports/image-2.png";
-import resumePdf from "./imports/Resume_Villaraza Kaycee.pdf";
 
 // ─── Palette: matcha green ────────────────────────────────────────────────────
 // bg: #F7FAF0  matcha: #7FAE60  deep: #3D5C2E  light: #B8D4A0  text: #2A3824
@@ -602,10 +601,11 @@ function Nav() {
 
 function Hero() {
   const { ref, visible } = useFadeIn(0.05);
+  const resumeUrl = "/resume-villaraza.pdf";
 
   const handleDownloadResume = () => {
     const link = document.createElement("a");
-    link.href = resumePdf;
+    link.href = resumeUrl;
     link.download = "Resume_Villaraza Kaycee.pdf";
     link.target = "_blank";
     document.body.appendChild(link);
