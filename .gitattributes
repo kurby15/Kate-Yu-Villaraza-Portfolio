@@ -149,3 +149,6 @@
 # without requiring Git LFS during deployment.
 src/imports/image-1.png -filter -diff -merge
 src/imports/image-2.png -filter -diff -merge
+
+# Keep the deployed resume as a regular Git blob so Vercel receives the PDF.
+public/resume-villaraza.pdf -filter -diff -merge
