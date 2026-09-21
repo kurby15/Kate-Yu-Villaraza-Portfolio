@@ -1653,7 +1653,12 @@ function Contact() {
     { icon: "✉", label: "Email", value: "Katieyu2020@gmail.com" },
     { icon: "📞", label: "Phone", value: "09989714156" },
     { icon: "📍", label: "Location", value: "Pasig, Philippines" },
-    { icon: "💼", label: "LinkedIn", value: "linkedin.com/in/katevillaraza" },
+    {
+      icon: "💼",
+      label: "LinkedIn",
+      value: "https://www.linkedin.com/in/kaycee-villaraza-093bbb418",
+      href: "https://www.linkedin.com/in/kaycee-villaraza-093bbb418",
+    },
   ];
   return (
     <section
@@ -1711,12 +1716,24 @@ function Contact() {
                     >
                       {c.label}
                     </p>
-                    <p
-                      className="text-sm font-medium"
-                      style={{ color: "#2A3824" }}
-                    >
-                      {c.value}
-                    </p>
+                    {c.href ? (
+                      <a
+                        href={c.href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm font-medium underline underline-offset-2"
+                        style={{ color: "#2A3824" }}
+                      >
+                        {c.value}
+                      </a>
+                    ) : (
+                      <p
+                        className="text-sm font-medium"
+                        style={{ color: "#2A3824" }}
+                      >
+                        {c.value}
+                      </p>
+                    )}
                   </div>
                 </div>
               ))}
@@ -1876,7 +1893,13 @@ function Footer() {
               {["LinkedIn", "Instagram", "Twitter"].map((s) => (
                 <a
                   key={s}
-                  href="#"
+                  href={
+                    s === "LinkedIn"
+                      ? "https://www.linkedin.com/in/kaycee-villaraza-093bbb418"
+                      : "#"
+                  }
+                  target={s === "LinkedIn" ? "_blank" : undefined}
+                  rel={s === "LinkedIn" ? "noopener noreferrer" : undefined}
                   className="px-3 py-1.5 rounded-lg text-xs font-medium hover:opacity-80"
                   style={{
                     background: "rgba(127,174,96,0.15)",
