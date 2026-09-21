@@ -601,7 +601,7 @@ function Nav() {
 
 function Hero() {
   const { ref, visible } = useFadeIn(0.05);
-  const resumeUrl = "/resume-villaraza.pdf";
+  const resumeUrl = "/Resume_Villaraza Kaycee.pdf";
 
   const handleDownloadResume = () => {
     const link = document.createElement("a");

@@ -45,6 +45,3 @@ service-account*.json
 # beside it.
 /.plugins/
 /.opencode-skills/
-
-# Local resume PDF asset
-src/imports/Resume_Villaraza Kaycee.pdf
