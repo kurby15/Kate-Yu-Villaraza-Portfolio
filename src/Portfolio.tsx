@@ -605,10 +605,21 @@ function Hero() {
     <section
       id="home"
       className="min-h-screen flex items-center pt-20 overflow-hidden relative"
-      style={{ background: "#F7FAF0" }}
+      style={{
+        background:
+          "linear-gradient(135deg,#F7FAF0 0%,#FFF4F6 58%,#FDE1E6 100%)",
+      }}
     >
-      <Orb size={360} color="#FD9FAE" className="top-0 right-[-80px]" />
-      <Orb size={240} color="#FD9FAE" className="bottom-16 left-[-60px]" />
+      <Orb
+        size={360}
+        color="linear-gradient(135deg,#FD9FAE,#D96C82)"
+        className="top-0 right-[-80px]"
+      />
+      <Orb
+        size={240}
+        color="linear-gradient(135deg,#FD9FAE,#D96C82)"
+        className="bottom-16 left-[-60px]"
+      />
       <Arc
         className="absolute top-24 left-8 w-36 text-[#FD9FAE] hidden lg:block"
         opacity={0.18}
@@ -625,9 +636,9 @@ function Hero() {
           >
             <span
               className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-medium"
-              style={{ background: "#C8DFAF", color: "#2A3824" }}
+              style={{ background: "#FD9FAE", color: "#FFFFFF" }}
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[#3D5C2E] animate-pulse" />
+              <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
               Available for New Clients
             </span>
           </div>
