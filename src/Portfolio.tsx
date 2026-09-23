@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { icons as brandIcons } from "@iconify-json/logos";
 import portrait1 from "./imports/image-1.png";
 import portrait2 from "./imports/image-2.png";
+import Chatbot from "./Chatbot";
 
 // ─── Palette: matcha green ────────────────────────────────────────────────────
 // bg: #F7FAF0  matcha: #7FAE60  deep: #3D5C2E  light: #B8D4A0  text: #2A3824
@@ -2139,6 +2140,7 @@ export default function Portfolio() {
       <Tools />
       <Contact />
       <Footer />
+      <Chatbot darkMode={darkMode} />
     </div>
   );
 }

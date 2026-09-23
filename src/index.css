@@ -221,3 +221,60 @@ section[id] {
 .theme-dark #testimonials .testimonial-progress {
   background: rgba(214, 233, 196, 0.18) !important;
 }
+
+.theme-dark .chatbot-panel {
+  background: #17231c !important;
+  border-color: #49634d !important;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42) !important;
+}
+
+.theme-dark .chatbot-header {
+  background: linear-gradient(135deg, #284a32, #537d5a) !important;
+}
+
+.theme-dark .chatbot-header p {
+  color: #f4f7ed !important;
+}
+
+.theme-dark .chatbot-header p.text-xs {
+  color: #d6e9c4 !important;
+}
+
+.theme-dark .chatbot-messages {
+  background: #17231c !important;
+}
+
+.theme-dark .chatbot-message-user {
+  background: #b95770 !important;
+  color: #fff7f8 !important;
+}
+
+.theme-dark .chatbot-message-assistant,
+.theme-dark .chatbot-thinking {
+  background: #2b4030 !important;
+  color: #edf5e8 !important;
+}
+
+.theme-dark .chatbot-composer {
+  background: #1d2d22 !important;
+  border-color: #49634d !important;
+}
+
+.theme-dark .chatbot-input-wrap {
+  background: #24382a !important;
+  border-color: #55725a !important;
+}
+
+.theme-dark .chatbot-input {
+  background: transparent !important;
+  color: #f4f7ed !important;
+}
+
+.theme-dark .chatbot-input::placeholder {
+  color: #b8d4a0 !important;
+}
+
+.theme-dark .chatbot-send {
+  background: #d96c82 !important;
+  color: #fff !important;
+}
