@@ -54,13 +54,15 @@ function Reveal({
   delay = 0,
   from = "bottom",
   className = "",
+  threshold = 0.1,
 }: {
   children: React.ReactNode;
   delay?: number;
   from?: "bottom" | "left" | "right";
   className?: string;
+  threshold?: number;
 }) {
-  const { ref, visible } = useFadeIn();
+  const { ref, visible } = useFadeIn(threshold);
   const tr =
     from === "left"
       ? "translateX(-28px)"
@@ -198,6 +200,7 @@ function Dots({ className = "" }: { className?: string }) {
 const NAV_LINKS = [
   { label: "Home", href: "#home" },
   { label: "About", href: "#about" },
+  { label: "Resume", href: "#resume" },
   { label: "Services", href: "#services" },
   { label: "Projects", href: "#projects" },
   { label: "Testimonials", href: "#testimonials" },
@@ -531,8 +534,8 @@ function Nav({
         boxShadow: scrolled ? "0 8px 24px rgba(42,56,36,0.08)" : "none",
       }}
     >
-      <nav className="max-w-6xl mx-auto px-6 h-20 flex items-center justify-between">
-        <a href="#home" className="flex items-center gap-2.5">
+      <nav className="nav-shell w-full px-6 sm:px-8 lg:px-12 h-20 lg:h-24 flex items-center justify-between gap-8">
+        <a href="#home" className="nav-brand flex items-center gap-3 shrink-0">
           <div
             className="w-9 h-9 rounded-full flex items-center justify-center text-xs font-semibold text-white"
             style={{
@@ -549,7 +552,7 @@ function Nav({
             Kate Yu Villaraza
           </span>
         </a>
-        <ul className="hidden md:flex items-center gap-8">
+        <ul className="hidden md:flex items-center gap-9 lg:gap-10">
           {NAV_LINKS.map((l) => (
             <li key={l.href}>
               <a
@@ -576,52 +579,59 @@ function Nav({
             </li>
           ))}
         </ul>
-        <button
-          type="button"
-          aria-label={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-          aria-pressed={darkMode}
-          title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
-          onClick={onToggleTheme}
-          className="hidden md:flex w-14 h-8 items-center rounded-full border-2 p-1 transition-all hover:-translate-y-0.5"
-          style={{
-            borderColor: darkMode ? "#52634A" : "#D6E9C4",
-            background: darkMode ? "#3D5C2E" : "#E6F0D8",
-          }}
-        >
-          <span
-            className={`flex w-6 h-6 items-center justify-center rounded-full bg-white shadow-sm transition-transform duration-300 ${darkMode ? "translate-x-6" : "translate-x-0"}`}
+        <div className="nav-actions hidden md:flex items-center gap-3">
+          <button
+            type="button"
+            aria-label={
+              darkMode ? "Switch to light mode" : "Switch to dark mode"
+            }
+            aria-pressed={darkMode}
+            title={darkMode ? "Switch to light mode" : "Switch to dark mode"}
+            onClick={onToggleTheme}
+            className="theme-toggle w-14 h-8 items-center rounded-full border-2 p-1 transition-all hover:-translate-y-0.5"
+            style={{
+              borderColor: darkMode ? "#52634A" : "#D6E9C4",
+              background: darkMode ? "#3D5C2E" : "#E6F0D8",
+            }}
           >
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke={darkMode ? "#D96C82" : "#3D5C2E"}
-              strokeWidth={1.8}
-              className="w-3.5 h-3.5"
-              aria-hidden="true"
+            <span
+              className={`theme-toggle-knob flex w-6 h-6 items-center justify-center rounded-full bg-white shadow-sm transition-transform duration-300 ${darkMode ? "translate-x-6" : "translate-x-0"}`}
             >
-              {darkMode ? (
-                <path
-                  strokeLinecap="round"
-                  d="M20 15.5A8.5 8.5 0 018.5 4 8.5 8.5 0 1020 15.5z"
-                />
-              ) : (
-                <path
-                  strokeLinecap="round"
-                  d="M12 3v1.5M12 19.5V21M3 12h1.5M19.5 12H21m-3.36-6.36l-1.06 1.06M7.42 17.58l-1.06 1.06m0-13l1.06 1.06m9.16 9.16l1.06 1.06M15.5 12a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0z"
-                />
-              )}
-            </svg>
-          </span>
-        </button>
-        <a
-          href="#contact"
-          className="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium text-white transition-all hover:opacity-90 hover:-translate-y-px"
-          style={{ background: "linear-gradient(135deg,#FD9FAE,#D96C82)" }}
-        >
-          Work With Me
-        </a>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke={darkMode ? "#D96C82" : "#3D5C2E"}
+                strokeWidth={1.8}
+                className="w-3.5 h-3.5"
+                aria-hidden="true"
+              >
+                {darkMode ? (
+                  <path
+                    strokeLinecap="round"
+                    d="M20 15.5A8.5 8.5 0 018.5 4 8.5 8.5 0 1020 15.5z"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    d="M12 3v1.5M12 19.5V21M3 12h1.5M19.5 12H21m-3.36-6.36l-1.06 1.06M7.42 17.58l-1.06 1.06m0-13l1.06 1.06m9.16 9.16l1.06 1.06M15.5 12a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0z"
+                  />
+                )}
+              </svg>
+            </span>
+          </button>
+          <a
+            href="#contact"
+            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-medium text-white transition-all hover:opacity-90 hover:-translate-y-px"
+            style={{ background: "linear-gradient(135deg,#FD9FAE,#D96C82)" }}
+          >
+            Work With Me
+          </a>
+        </div>
         <button
-          className="md:hidden"
+          className="mobile-menu-toggle md:hidden"
+          type="button"
+          aria-label={open ? "Close menu" : "Open menu"}
+          aria-expanded={open}
           style={{ color: "#3D5C2E" }}
           onClick={() => setOpen(!open)}
         >
@@ -650,7 +660,7 @@ function Nav({
       </nav>
       {open && (
         <div
-          className="md:hidden px-6 pb-6 pt-2 flex flex-col gap-4 border-t"
+          className="mobile-nav-panel md:hidden px-6 pb-6 pt-2 flex flex-col gap-4 border-t"
           style={{
             background: "rgba(247,250,240,0.98)",
             borderColor: "#D6E9C4",
@@ -680,7 +690,7 @@ function Nav({
           ))}
           <a
             href="#contact"
-            className="mt-2 py-3 rounded-full text-sm font-medium text-white text-center"
+            className="mobile-nav-cta mt-2 py-3 rounded-full text-sm font-medium text-white text-center"
             style={{ background: "linear-gradient(135deg,#FD9FAE,#D96C82)" }}
             onClick={() => setOpen(false)}
           >
@@ -693,20 +703,42 @@ function Nav({
             }
             aria-pressed={darkMode}
             onClick={onToggleTheme}
-            className="mt-1 flex items-center justify-between gap-3 px-4 py-3 rounded-full text-sm font-medium border-2 transition-colors"
+            className="theme-toggle-mobile mt-1 flex items-center justify-between gap-3 px-4 py-3 rounded-2xl text-sm font-medium border transition-colors"
             style={{
               color: darkMode ? "#FDE1E6" : "#3D5C2E",
               borderColor: darkMode ? "#52634A" : "#D6E9C4",
               background: darkMode ? "#263829" : "#F7FAF0",
             }}
           >
-            <span>{darkMode ? "Light Mode" : "Dark Mode"}</span>
+            <span className="flex items-center gap-2">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.8}
+                className="w-4 h-4"
+                aria-hidden="true"
+              >
+                {darkMode ? (
+                  <path
+                    strokeLinecap="round"
+                    d="M20 15.5A8.5 8.5 0 018.5 4 8.5 8.5 0 1020 15.5z"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    d="M12 3v1.5M12 19.5V21M3 12h1.5M19.5 12H21m-3.36-6.36l-1.06 1.06M7.42 17.58l-1.06 1.06m0-13l1.06 1.06m9.16 9.16l1.06 1.06M15.5 12a3.5 3.5 0 11-7 0 3.5 3.5 0 017 0z"
+                  />
+                )}
+              </svg>
+              {darkMode ? "Light Mode" : "Dark Mode"}
+            </span>
             <span
-              className="flex w-12 h-7 items-center rounded-full p-1"
+              className="theme-toggle-track flex w-12 h-7 items-center rounded-full p-1"
               style={{ background: darkMode ? "#3D5C2E" : "#D6E9C4" }}
             >
               <span
-                className={`block w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-300 ${darkMode ? "translate-x-5" : "translate-x-0"}`}
+                className={`theme-toggle-knob block w-5 h-5 rounded-full bg-white shadow-sm transition-transform duration-300 ${darkMode ? "translate-x-5" : "translate-x-0"}`}
               />
             </span>
           </button>
@@ -1134,6 +1166,252 @@ function About() {
             </a>
           </Reveal>
         </div>
+      </div>
+    </section>
+  );
+}
+
+const RESUME_EXPERIENCE = [
+  {
+    company: "QBE Insurance · GSSC",
+    role: "Insurance Specialist",
+    dates: "2013 — Present",
+    focus: "Motor, small business, and domestic insurance portfolios",
+    points: [
+      "Mercedes-Benz Motor: manage a premium motor portfolio and support dealerships and clients with end-to-end policy management.",
+      "DIGI Small Business: manage policy setup, billing, renewals, client support, and insurance documentation for Australian businesses.",
+      "Remediation: verify financial discrepancies, resolve escalations, issue refunds, and maintain audit-ready documentation.",
+      "Domestic Portfolio: liaise with intermediaries, financial institutions, and brokers on policy changes, pricing, and agreements.",
+      "Previously supported Home, Motor, Consumer Credit, Pleasure Craft, Caravan, Trailer, and Horse Float insurance lines.",
+    ],
+  },
+  {
+    company: "Aegis People Services",
+    role: "CTP Insurance Specialist",
+    dates: "2012 — 2013",
+    focus:
+      "Greenslip insurance for New South Wales, South Australia, and Queensland",
+    points: [
+      "Supported customers with policy enquiries, documentation, and policy servicing across multiple states.",
+    ],
+  },
+  {
+    company: "ePerformax Contact Centre",
+    role: "Billing Analyst & Customer Service Representative",
+    dates: "2010 — 2012",
+    focus: "Origin Energy Australia, T-Mobile, and Verizon",
+    points: [
+      "Managed billing support and customer service enquiries while maintaining accurate, timely account resolutions.",
+    ],
+  },
+];
+
+const RESUME_SKILLS = [
+  "Policy administration",
+  "Underwriting support",
+  "Risk analysis",
+  "Broker relations",
+  "Customer retention",
+  "Compliance frameworks",
+  "Team mentoring",
+  "Process improvement",
+];
+
+function Resume() {
+  const resumeUrl = `${import.meta.env.BASE_URL}resume-villaraza.pdf`;
+
+  return (
+    <section
+      id="resume"
+      className="py-24 md:py-28"
+      style={{ background: "#FFF4F6" }}
+    >
+      <div className="max-w-6xl mx-auto px-6">
+        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-8 mb-14">
+          <div className="max-w-xl">
+            <Reveal>
+              <p
+                className="text-xs font-semibold uppercase tracking-[0.2em] mb-4"
+                style={{ color: "#8F4051" }}
+              >
+                Resume
+              </p>
+              <h2
+                className="text-4xl md:text-5xl leading-tight"
+                style={{
+                  fontFamily: "Playfair Display,serif",
+                  color: "#2A3824",
+                }}
+              >
+                Experience that
+                <br />
+                keeps things moving.
+              </h2>
+            </Reveal>
+          </div>
+          <Reveal from="right">
+            <a
+              href={resumeUrl}
+              download="resume-villaraza.pdf"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="resume-download inline-flex items-center gap-2 px-5 py-3 rounded-full text-sm font-medium transition-all hover:-translate-y-px hover:shadow-sm"
+              style={{ background: "#2A3824", color: "#F7FAF0" }}
+            >
+              Download full resume
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={1.8}
+                className="w-4 h-4"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M12 3v12m0 0l-4-4m4 4l4-4M5 21h14"
+                />
+              </svg>
+            </a>
+          </Reveal>
+        </div>
+
+        <Reveal>
+          <div className="max-w-2xl mx-auto text-center mb-12">
+            <p className="text-sm leading-7" style={{ color: "#6F5B62" }}>
+              Insurance specialist with 13 years of experience supporting
+              customers, brokers, and high-volume policy portfolios.
+            </p>
+            <div className="flex flex-wrap justify-center gap-2 mt-6">
+              {RESUME_SKILLS.map((skill) => (
+                <span
+                  key={skill}
+                  className="resume-skill px-3 py-1.5 rounded-full text-xs"
+                  style={{
+                    color: "#52634A",
+                    background: "#FDE3E7",
+                    border: "1px solid #F2C7D0",
+                  }}
+                >
+                  {skill}
+                </span>
+              ))}
+            </div>
+          </div>
+        </Reveal>
+
+        <div className="relative max-w-5xl mx-auto">
+          <div
+            className="resume-line absolute left-4 md:left-1/2 top-0 bottom-0 w-px -translate-x-1/2"
+            style={{ background: "#E7C8CF" }}
+            aria-hidden="true"
+          />
+          <div className="flex flex-col gap-12 md:gap-16">
+            {RESUME_EXPERIENCE.map((entry, index) => {
+              const isLeft = index % 2 === 0;
+              return (
+                <Reveal
+                  key={entry.company}
+                  delay={index * 90}
+                  from={isLeft ? "left" : "right"}
+                  threshold={0.38}
+                >
+                  <div className="relative grid md:grid-cols-2 md:gap-16">
+                    <span
+                      className="resume-dot absolute left-4 md:left-1/2 top-5 w-4 h-4 rounded-full border-4 -translate-x-1/2 z-10"
+                      style={{ background: "#D96C82", borderColor: "#FFF4F6" }}
+                      aria-hidden="true"
+                    />
+                    <article
+                      className={`resume-card ${isLeft ? "md:col-start-1 md:text-right" : "md:col-start-2"} ml-10 md:ml-0 p-6 rounded-2xl`}
+                      style={{
+                        background: "#FBFCF7",
+                        border: "1px solid #E7C8CF",
+                      }}
+                    >
+                      <div
+                        className={`flex flex-col gap-1 mb-4 ${isLeft ? "md:items-end" : "items-start"}`}
+                      >
+                        <span
+                          className="resume-date text-xs font-medium"
+                          style={{ color: "#8F4051" }}
+                        >
+                          {entry.dates}
+                        </span>
+                        <h3
+                          className="text-xl"
+                          style={{
+                            fontFamily: "Playfair Display,serif",
+                            color: "#2A3824",
+                          }}
+                        >
+                          {entry.company}
+                        </h3>
+                        <p
+                          className="resume-role text-sm font-semibold"
+                          style={{ color: "#52634A" }}
+                        >
+                          {entry.role}
+                        </p>
+                        <p
+                          className="resume-focus text-xs"
+                          style={{ color: "#8A737A" }}
+                        >
+                          {entry.focus}
+                        </p>
+                      </div>
+                      <ul
+                        className={`flex flex-col gap-2 ${isLeft ? "md:items-end" : "items-start"}`}
+                      >
+                        {entry.points.map((point) => (
+                          <li
+                            key={point}
+                            className={`resume-point flex gap-3 text-sm leading-6 ${isLeft ? "md:flex-row-reverse" : ""}`}
+                            style={{ color: "#6F5B62" }}
+                          >
+                            <span
+                              className="mt-[9px] w-1.5 h-1.5 rounded-full shrink-0"
+                              style={{ background: "#B8D4A0" }}
+                              aria-hidden="true"
+                            />
+                            {point}
+                          </li>
+                        ))}
+                      </ul>
+                    </article>
+                  </div>
+                </Reveal>
+              );
+            })}
+          </div>
+        </div>
+
+        <Reveal delay={180}>
+          <div
+            className="resume-education text-center mt-14 pt-8 border-t"
+            style={{ borderColor: "#E7C8CF" }}
+          >
+            <p
+              className="resume-date text-[10px] font-semibold uppercase tracking-[0.18em] mb-3"
+              style={{ color: "#8F4051" }}
+            >
+              Education
+            </p>
+            <p
+              className="resume-school text-sm font-medium"
+              style={{ color: "#2A3824" }}
+            >
+              University of Santo Tomas
+            </p>
+            <p
+              className="resume-focus text-xs mt-1"
+              style={{ color: "#7A6A70" }}
+            >
+              BS Psychology · 2010
+            </p>
+          </div>
+        </Reveal>
       </div>
     </section>
   );
@@ -1568,10 +1846,10 @@ function Testimonials() {
 // ─── Tools ────────────────────────────────────────────────────────────────────
 
 const TOOL_LOGOS: Record<string, string> = {
-  "Google Workspace": "google",
-  "Google Calendar": "google-calendar",
+  "Google Workspace": "google-icon",
+  "Google Calendar": "google-calendar-2020",
   Gmail: "google-gmail",
-  Outlook: "microsoft-outlook",
+  Outlook: "microsoft-icon",
   "Microsoft Office": "microsoft-icon",
   "Microsoft Teams": "microsoft-teams",
   Teams: "microsoft-teams",
@@ -1580,7 +1858,7 @@ const TOOL_LOGOS: Record<string, string> = {
   Slack: "slack-icon",
   Zoom: "zoom-icon",
   Zendesk: "zendesk",
-  Freshdesk: "freshdesk",
+  Freshdesk: "fresh",
   Intercom: "intercom",
   HubSpot: "hubspot",
   LiveChat: "livechat",
@@ -1686,9 +1964,10 @@ function ToolLogo({ name }: { name: string }) {
   if (icon) {
     return (
       <svg
-        viewBox={`0 0 ${icon.width ?? 24} ${icon.height ?? 24}`}
+        viewBox={`0 0 ${icon.width ?? 256} ${icon.height ?? 256}`}
         aria-hidden="true"
-        className="w-5 h-5"
+        className="w-5 h-5 object-contain"
+        preserveAspectRatio="xMidYMid meet"
         dangerouslySetInnerHTML={{ __html: icon.body }}
       />
     );
@@ -1698,66 +1977,118 @@ function ToolLogo({ name }: { name: string }) {
     return <span aria-hidden="true">{SKILL_ICONS[name]}</span>;
   }
 
+  if (name === "LiveChat") {
+    return (
+      <svg
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#3D5C2E"
+        strokeWidth="1.8"
+        className="w-4 h-4"
+        aria-hidden="true"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M7.5 18.75L3.75 21l1.125-4.5A8.25 8.25 0 1112 20.25a8.2 8.2 0 004.5-1.336"
+        />
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="M8.25 12h.008v.008H8.25V12zm3.75 0h.008v.008H12V12zm3.75 0h.008v.008H15.75V12z"
+        />
+      </svg>
+    );
+  }
+
   return (
     <span
-      className="w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-semibold"
-      style={{ background: "#D6E9C4", color: "#3D5C2E" }}
+      className="w-4 h-4 rounded-full flex items-center justify-center"
+      style={{ background: "#B8D4A0" }}
       aria-hidden="true"
-    >
-      {name.charAt(0)}
-    </span>
+    />
   );
 }
 
 function Tools() {
   return (
-    <section id="tools" className="py-24" style={{ background: "#F7FAF0" }}>
+    <section
+      id="tools"
+      className="py-24 md:py-28"
+      style={{ background: "#F7FAF0" }}
+    >
       <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center max-w-xl mx-auto mb-14">
+        <div className="tools-header grid lg:grid-cols-[0.9fr_1.1fr] gap-8 lg:gap-20 items-end mb-12">
           <Reveal>
             <p
-              className="text-xs font-semibold uppercase tracking-widest mb-3"
-              style={{ color: "#7FAE60" }}
+              className="text-xs font-semibold uppercase tracking-[0.2em] mb-4"
+              style={{ color: "#5C8A3A" }}
             >
               Skills & Tools
             </p>
-          </Reveal>
-          <Reveal delay={80}>
             <h2
-              className="text-3xl md:text-4xl"
+              className="tools-title text-4xl md:text-5xl leading-[1.04]"
               style={{ fontFamily: "Playfair Display,serif", color: "#2A3824" }}
             >
-              My Toolkit
+              The systems
+              <br />
+              behind the work.
             </h2>
           </Reveal>
+          <Reveal delay={80}>
+            <div
+              className="tools-description max-w-lg border-b pb-5"
+              style={{ borderColor: "#CFE2BB" }}
+            >
+              <p className="text-sm leading-7" style={{ color: "#6F8068" }}>
+                Organized, responsive, and ready to support the details that
+                keep a business moving.
+              </p>
+            </div>
+          </Reveal>
         </div>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div
+          className="tools-grid grid sm:grid-cols-2 lg:grid-cols-4 gap-px"
+          style={{ background: "#CFE2BB", border: "1px solid #CFE2BB" }}
+        >
           {Object.entries(TOOLS).map(([cat, items], ci) => (
             <Reveal key={cat} delay={ci * 80}>
               <div
-                className="rounded-2xl p-6 flex flex-col gap-4 h-full"
-                style={{ background: "#FFF4F6", border: "1px solid #D6E9C4" }}
+                className="tools-card p-5 md:p-6 flex flex-col gap-6 h-full transition-colors duration-200 hover:bg-[#FFF4F6]"
+                style={{ background: "#FBFCF7" }}
               >
-                <h3
-                  className="text-xs font-semibold uppercase tracking-widest"
-                  style={{ color: "#5C8A3A" }}
-                >
-                  {cat}
-                </h3>
-                <div className="flex flex-col gap-2">
+                <div className="flex items-center justify-between gap-3">
+                  <h3
+                    className="text-lg"
+                    style={{
+                      fontFamily: "Playfair Display,serif",
+                      color: "#2A3824",
+                    }}
+                  >
+                    {cat}
+                  </h3>
+                  <span
+                    className="text-[10px] font-semibold tracking-[0.14em]"
+                    style={{ color: "#98AA8D" }}
+                  >
+                    0{ci + 1}
+                  </span>
+                </div>
+                <div className="flex flex-col">
                   {items.map((item) => (
                     <div
                       key={item}
-                      className="flex items-center gap-2.5 py-1.5 px-3 rounded-xl text-sm transition-colors hover:bg-[#FDF5F8]"
-                      style={{ background: "#E6F0D8", color: "#2A3824" }}
+                      className="flex items-center gap-3 py-3 border-t transition-transform duration-200 hover:translate-x-1"
+                      style={{ borderColor: "#E3ECD9", color: "#40513A" }}
                     >
                       <span
-                        className="w-6 h-6 rounded-lg shrink-0 flex items-center justify-center bg-[#FFF4F6] shadow-sm"
+                        className="w-7 h-7 rounded-md shrink-0 flex items-center justify-center"
+                        style={{ background: "#F0F5E9" }}
                         aria-hidden="true"
                       >
                         <ToolLogo name={item} />
                       </span>
-                      <span>{item}</span>
+                      <span className="text-[13px]">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -1843,11 +2174,14 @@ function Contact() {
               Ready to make your business more organized and productive? Let's
               connect and discuss how I can help you reclaim your time.
             </p>
-            <div className="flex flex-col gap-4">
+            <div className="contact-details flex flex-col gap-4">
               {contactItems.map((c) => (
-                <div key={c.label} className="flex items-center gap-4">
+                <div
+                  key={c.label}
+                  className="contact-item flex items-center gap-4"
+                >
                   <div
-                    className="w-10 h-10 rounded-xl flex items-center justify-center text-lg"
+                    className="contact-icon w-10 h-10 rounded-xl flex items-center justify-center text-lg"
                     style={{ background: "#E6F0D8" }}
                   >
                     {c.icon}
@@ -1884,7 +2218,10 @@ function Contact() {
           </div>
         </Reveal>
         <Reveal from="right" delay={100}>
-          <div className="rounded-3xl p-8" style={{ background: "#F7FAF0" }}>
+          <div
+            className="contact-form-card rounded-3xl p-8"
+            style={{ background: "#F7FAF0" }}
+          >
             {sent ? (
               <div className="flex flex-col items-center text-center gap-4 py-8">
                 <div
@@ -2134,6 +2471,7 @@ export default function Portfolio() {
       />
       <Hero />
       <About />
+      <Resume />
       <Services />
       <Projects />
       <Testimonials />

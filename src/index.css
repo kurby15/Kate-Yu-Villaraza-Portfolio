@@ -278,3 +278,420 @@ section[id] {
   background: #d96c82 !important;
   color: #fff !important;
 }
+
+/* Resume timeline */
+#resume .resume-card {
+  box-shadow: 0 12px 30px rgba(42, 56, 36, 0.06);
+  transition:
+    transform 220ms ease,
+    box-shadow 220ms ease,
+    background-color 220ms ease;
+}
+
+#resume .resume-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 18px 38px rgba(42, 56, 36, 0.11);
+}
+
+#resume .resume-download {
+  box-shadow: 0 8px 18px rgba(42, 56, 36, 0.12);
+}
+
+.theme-dark #resume {
+  background: #1f2d24 !important;
+}
+
+.theme-dark #resume .resume-card {
+  background: #263b2d !important;
+  border-color: #4c6a50 !important;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.2);
+}
+
+.theme-dark #resume .resume-card:hover {
+  background: #2b4432 !important;
+  box-shadow: 0 20px 42px rgba(0, 0, 0, 0.3);
+}
+
+.theme-dark #resume .resume-line,
+.theme-dark #resume .resume-education {
+  background: transparent !important;
+  border-color: #4c6a50 !important;
+}
+
+.theme-dark #resume .resume-line {
+  background: #4c6a50 !important;
+}
+
+.theme-dark #resume .resume-dot {
+  background: #e88799 !important;
+  border-color: #1f2d24 !important;
+}
+
+.theme-dark #resume .resume-skill {
+  background: #314a37 !important;
+  border-color: #55765a !important;
+  color: #e5f1df !important;
+}
+
+.theme-dark #resume .resume-download {
+  background: #e88799 !important;
+  color: #1b281f !important;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.24);
+}
+
+.theme-dark #resume .resume-date {
+  color: #f4a5b3 !important;
+}
+
+.theme-dark #resume .resume-role {
+  color: #d8e9d0 !important;
+}
+
+.theme-dark #resume .resume-focus {
+  color: #b8d4a0 !important;
+}
+
+.theme-dark #resume .resume-point {
+  color: #d0dfca !important;
+}
+
+.theme-dark #resume .resume-school {
+  color: #f4f7ed !important;
+}
+
+/* Shared responsive foundations */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+img,
+svg {
+  max-width: 100%;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.theme-dark {
+  color-scheme: dark;
+}
+
+/* Section-aware dark surfaces */
+.theme-dark #about,
+.theme-dark #services,
+.theme-dark #tools {
+  background: #18251c !important;
+}
+
+.theme-dark #about .rounded-3xl,
+.theme-dark #services .rounded-3xl,
+.theme-dark #services .rounded-2xl,
+.theme-dark #projects .rounded-2xl,
+.theme-dark #tools > div > div > div,
+.theme-dark #contact .rounded-3xl {
+  background: #24372a !important;
+  border-color: #405b44 !important;
+  box-shadow: 0 14px 32px rgba(0, 0, 0, 0.16);
+}
+
+.theme-dark #about .rounded-3xl:hover,
+.theme-dark #services .rounded-3xl:hover,
+.theme-dark #services .rounded-2xl:hover,
+.theme-dark #projects .rounded-2xl:hover,
+.theme-dark #tools > div > div > div:hover {
+  background: #2b4432 !important;
+}
+
+.theme-dark #tools > div > div {
+  background: #405b44 !important;
+  border-color: #405b44 !important;
+}
+
+.theme-dark #tools [style*="border-top"] {
+  border-color: #405b44 !important;
+}
+
+.theme-dark #tools [style*="background"] {
+  border-color: #405b44 !important;
+}
+
+.theme-dark #projects [style*="background"],
+.theme-dark #tools [style*="background"] {
+  background-color: #2d4733 !important;
+}
+
+.theme-dark #projects img {
+  filter: saturate(0.82) brightness(0.82);
+}
+
+.theme-dark #contact {
+  background: #2d4733 !important;
+}
+
+.theme-dark #contact input,
+.theme-dark #contact select,
+.theme-dark #contact textarea {
+  background: #1b2c21 !important;
+  border-color: #55725a !important;
+}
+
+.theme-dark #contact .rounded-3xl {
+  background: #edf4e8 !important;
+}
+
+.theme-dark #contact .rounded-3xl h3,
+.theme-dark #contact .rounded-3xl p,
+.theme-dark #contact .rounded-3xl input,
+.theme-dark #contact .rounded-3xl select,
+.theme-dark #contact .rounded-3xl textarea {
+  color: #253529 !important;
+}
+
+@media (max-width: 767px) {
+  section {
+    scroll-margin-top: 68px;
+  }
+
+  .theme-dark #home {
+    min-height: auto;
+  }
+
+  #home .max-w-6xl,
+  #about .max-w-6xl,
+  #resume .max-w-6xl,
+  #services .max-w-6xl,
+  #projects .max-w-6xl,
+  #testimonials .max-w-5xl,
+  #tools .max-w-6xl,
+  #contact .max-w-6xl,
+  footer .max-w-6xl {
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  #services ul.grid {
+    grid-template-columns: 1fr;
+  }
+
+  #resume .resume-card {
+    overflow-wrap: anywhere;
+  }
+
+  #testimonials blockquote {
+    font-size: 1.15rem;
+  }
+}
+
+@media (max-width: 420px) {
+  #home h1 {
+    font-size: 2.5rem;
+  }
+
+  #home .flex-wrap a {
+    width: 100%;
+    justify-content: center;
+  }
+
+  #resume .resume-card {
+    padding: 1.125rem;
+  }
+}
+
+/* Focused dark styling for the toolkit and contact sections */
+.theme-dark #tools {
+  background: #151e18 !important;
+}
+
+.theme-dark #tools .tools-grid {
+  background: #344a38 !important;
+  border-color: #344a38 !important;
+}
+
+.theme-dark #tools .tools-card {
+  background: #1c2a20 !important;
+  border-color: #344a38 !important;
+  box-shadow: none !important;
+}
+
+.theme-dark #tools .tools-card:hover {
+  background: #223528 !important;
+}
+
+.theme-dark #tools .tools-card [style*="border-top"] {
+  border-color: #344a38 !important;
+}
+
+.theme-dark #tools .tools-card [style*="background"] {
+  background: #263b2c !important;
+}
+
+.theme-dark #tools .tools-card span,
+.theme-dark #tools .tools-card h3 {
+  color: #e3eee0 !important;
+}
+
+.theme-dark #tools > div > div:first-child > div {
+  border-color: #344a38 !important;
+}
+
+.theme-dark #tools > div > div:first-child p {
+  color: #9db59b !important;
+}
+
+.theme-dark #contact {
+  background: #263d2d !important;
+}
+
+.theme-dark #contact .contact-icon {
+  background: #d98a9b !important;
+  color: #172219 !important;
+}
+
+.theme-dark #contact .contact-item p,
+.theme-dark #contact .contact-item a {
+  color: #e5eee1 !important;
+}
+
+.theme-dark #contact .contact-item p.text-xs {
+  color: #a9c1a5 !important;
+}
+
+.theme-dark #contact .contact-form-card {
+  background: #142019 !important;
+  border: 1px solid #45614a !important;
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2) !important;
+}
+
+.theme-dark #contact .contact-form-card h3 {
+  color: #f2f7ee !important;
+}
+
+.theme-dark #contact .contact-form-card input,
+.theme-dark #contact .contact-form-card select,
+.theme-dark #contact .contact-form-card textarea {
+  background: #1d2c22 !important;
+  border-color: #4b684f !important;
+  color: #edf5e9 !important;
+}
+
+.theme-dark #contact .contact-form-card input::placeholder,
+.theme-dark #contact .contact-form-card textarea::placeholder {
+  color: #91aa90 !important;
+}
+
+.theme-dark #contact .contact-form-card option {
+  background: #1d2c22;
+  color: #edf5e9;
+}
+
+/* Compact, responsive mobile navigation and toolkit header */
+.mobile-menu-toggle {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 1px solid #d6e9c4;
+  border-radius: 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(247, 250, 240, 0.72);
+}
+
+.theme-dark .mobile-menu-toggle {
+  color: #e88799 !important;
+  background: #263b2c !important;
+  border-color: #55725a !important;
+}
+
+.theme-dark .mobile-nav-panel {
+  background: #19291e !important;
+  border-color: #405b44 !important;
+}
+
+.theme-dark .mobile-nav-panel a {
+  color: #e5eee1 !important;
+}
+
+.theme-dark .mobile-nav-panel .mobile-nav-cta {
+  background: #d96c82 !important;
+  color: #1b281f !important;
+}
+
+.theme-toggle {
+  display: inline-flex;
+  border-color: #c7dbb8 !important;
+  background: #e5efd9 !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+
+.theme-toggle:hover,
+.theme-toggle-mobile:hover {
+  filter: brightness(1.04);
+}
+
+.theme-toggle-knob {
+  transition:
+    transform 260ms ease,
+    box-shadow 260ms ease;
+}
+
+.theme-toggle-mobile {
+  color: #3d5c2e !important;
+  border-color: #c7dbb8 !important;
+  background: #f7faf0 !important;
+}
+
+.theme-toggle-track {
+  background: #d6e9c4 !important;
+}
+
+.theme-dark .theme-toggle {
+  border-color: #55725a !important;
+  background: #263b2c !important;
+}
+
+.theme-dark .theme-toggle-mobile {
+  color: #edf5e9 !important;
+  border-color: #55725a !important;
+  background: #1d2c22 !important;
+}
+
+.theme-dark .theme-toggle-track {
+  background: #3d5c2e !important;
+}
+
+@media (min-width: 768px) {
+  .mobile-menu-toggle,
+  .mobile-nav-panel {
+    display: none !important;
+  }
+}
+
+.tools-title {
+  max-width: 10ch;
+}
+
+@media (max-width: 1023px) {
+  .tools-title {
+    max-width: 12ch;
+  }
+}
+
+@media (max-width: 639px) {
+  .tools-header {
+    gap: 2rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .tools-title {
+    max-width: none;
+    font-size: clamp(2.35rem, 11vw, 3.25rem);
+  }
+
+  .tools-description {
+    max-width: none;
+    padding-bottom: 1rem;
+  }
+}
