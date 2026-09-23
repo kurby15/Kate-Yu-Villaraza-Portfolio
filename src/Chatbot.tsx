@@ -8,56 +8,6 @@ type Message = {
 const STARTER_MESSAGE =
   "Hi! I’m Keiko, Kaycee’s resume assistant. Ask me about her experience, insurance expertise, skills, education, or awards.";
 
-const RESUME_CONTEXT = `
-Name: Kaycee Villaraza
-Location: Pasig City
-Current role: Insurance Specialist at QBE Insurance - GSSC (Group Shared Services Centre), 2013 to present.
-Professional summary: Insurance Specialist with 13 years of experience managing personal and commercial insurance portfolios for a globally recognized insurer headquartered in Australia. Her expertise includes underwriting support, risk assessment, policy administration, compliance, broker relations, customer retention, and analytical decision-making.
-
-QBE experience:
-- Mercedes-Benz Motor Vehicle Insurance: Oversees QBE's premium motor vehicle portfolio, supports dealerships and clients nationwide, manages 60-80 weekly policy enquiries, handles billing, alterations, cancellations, renewals, documentation, missed payments, underwriting guidance, manual renewal reviews, and client complaints.
-- DIGI Small Business Insurance: Manages end-to-end policy processes for Australian small business clients, including policy setup, billing, renewals, support, cover enquiries, mid-term alterations, and policy documents such as Certificates of Currency, tax invoices, payment histories, claims histories, and renewal letters.
-- Remediation for Motor, Home, Business, and Farm Insurance: Reviews client accounts and transactions, verifies financial discrepancies, resolves issues with clients and brokers, issues refunds, performs remediation actions, documents cases for audit readiness, and protects financial integrity.
-- Domestic Portfolio for intermediaries, financial institutions, and brokers: Liaises with intermediaries, brokers, and banks; interprets requirements; advises on policy changes; and negotiates contracts, pricing, and agreements.
-- Other QBE product lines from 2013 to 2017: Home and Contents Insurance, Motor Vehicle Insurance, Consumer Credit Insurance, Pleasure Craft Insurance, Caravan Insurance, Trailer Insurance, and Horse Float Insurance.
-- CTP Insurance, 2012-2013: Supported compulsory third-party insurance for New South Wales, South Australia, and Queensland, including quotes, applications, vehicle registration support, coverage explanations, and policy setup.
-
-Previous experience:
-- Billing Analyst for Origin Energy Australia at Aegis People Services: Managed billing operations, invoicing, collections, repayment plans, delinquent accounts, client communication, and compliance records.
-- 411 Directory Assistance for T-Mobile and Verizon at ePerformax Contact Centre: Handled high-volume inbound calls, directory lookups, customer concerns, confidential information, and service-quality requirements.
-
-Core skills: Insurance products, Australian insurance regulations and compliance frameworks including ASIC, APRA, and AFCA, underwriting support, risk analysis, policy administration, customer service, broker and client relations, remediation, financial accuracy, training and mentoring, time management, prioritization, and cross-functional teamwork.
-
-Education: Bachelor of Science in Psychology, University of Santo Tomas, 2010.
-Recognition: Retention Champion Award (2016); 10 Years of Service and Integrity Award (2023); Partnership and Synergy Award (2023); Performance Excellence Award (2024); QBE DNA Champion (2025).
-`;
-
-function cleanGeminiText(text: string): string {
-  return text.replace(/\*/g, "").trim();
-}
-
-function readGeminiText(data: unknown): string {
-  if (!data || typeof data !== "object") return "";
-  const response = data as {
-    output?: Array<{ type?: string; text?: string }>;
-    candidates?: Array<{ content?: { parts?: Array<{ text?: string }> } }>;
-  };
-
-  const interactionText = response.output
-    ?.filter((item) => item.type === "text" && item.text)
-    .map((item) => item.text)
-    .join("\n")
-    .trim();
-  if (interactionText) return cleanGeminiText(interactionText);
-
-  return cleanGeminiText(
-    response.candidates?.[0]?.content?.parts
-      ?.map((part) => part.text || "")
-      .join("")
-      .trim() || "",
-  );
-}
-
 export default function Chatbot({ darkMode = false }: { darkMode?: boolean }) {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState("");
@@ -69,7 +19,6 @@ export default function Chatbot({ darkMode = false }: { darkMode?: boolean }) {
   async function sendMessage(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const question = input.trim();
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
     if (!question || isLoading) return;
 
     setInput("");
@@ -77,45 +26,21 @@ export default function Chatbot({ darkMode = false }: { darkMode?: boolean }) {
     setIsLoading(true);
 
     try {
-      if (!apiKey) {
-        throw new Error("The chatbot is not configured yet.");
-      }
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ question }),
+      });
 
-      const response = await fetch(
-        `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(
-          import.meta.env.VITE_GEMINI_MODEL || "gemini-3.5-flash-lite",
-        )}:generateContent`,
-        {
-          method: "POST",
-          headers: {
-            "x-goog-api-key": apiKey,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            contents: [
-              {
-                role: "user",
-                parts: [
-                  {
-                    text: `You are Keiko, Kaycee Villaraza's helpful resume assistant. Answer using only the resume context below. Be concise, warm, and professional. Never invent employers, dates, skills, responsibilities, awards, or qualifications. If the answer is not in the resume, say that the resume does not specify it. If the question is unrelated, say you can help with Kaycee's experience, insurance expertise, skills, education, or awards.\n\nResume context:\n${RESUME_CONTEXT}\nVisitor question: ${question}`,
-                  },
-                ],
-              },
-            ],
-          }),
-        },
-      );
-
+      const data = (await response.json().catch(() => null)) as {
+        answer?: string;
+        error?: string;
+      } | null;
       if (!response.ok) {
-        const errorBody = (await response.json().catch(() => null)) as {
-          error?: { message?: string };
-        } | null;
-        throw new Error(
-          errorBody?.error?.message || "Gemini could not answer right now.",
-        );
+        throw new Error(data?.error || "Gemini could not answer right now.");
       }
 
-      const answer = readGeminiText(await response.json());
+      const answer = data?.answer?.trim() || "";
       if (!answer) throw new Error("Gemini returned an empty response.");
       setMessages((current) => [
         ...current,
